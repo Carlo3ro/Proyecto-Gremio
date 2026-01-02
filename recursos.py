@@ -161,3 +161,19 @@ def mostrar_Armas ():
     return ''
 
 #print(mostrar_Armas())
+
+def mostrar_Mazmorras():
+    '''
+    Muestra las Mazmorras disponibles, su duracion en horas
+    y su descripcion
+    '''
+    print('\n=== MAZMORRAS DISPONIBLES ===\n')
+    for mazmorra, info in recursos['Mazmorras'].items():
+        if info['disponible'] == True:
+            print(f'''{mazmorra}: se encuentra disponible, tarda {info['duracion_horas']} horas en completarse,
+ {info['descripcion']}\n''')
+        else:
+            print(f'{mazmorra} no se encuentra disponible\n')
+    return ''
+
+#print(mostrar_Mazmorras())
