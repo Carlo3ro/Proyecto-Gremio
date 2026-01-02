@@ -177,3 +177,17 @@ def mostrar_Mazmorras():
     return ''
 
 #print(mostrar_Mazmorras())
+
+def mostrar_recursos():
+    '''
+    Muestra todos los recursos con sus distintas stats
+    '''
+    print('\n=== RECURSOS ===\n')
+    f1 = mostrar_Aventureros()
+    f2 = mostrar_Armas()
+    f3 = mostrar_Mazmorras()
+    f4 = f'\n{f1}\n{f2}\n{f3}\n'
+    
+    return ''
+
+#print(mostrar_recursos())
