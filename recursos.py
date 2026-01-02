@@ -123,3 +123,26 @@ recursos = {
 
 
 # print('\n', recursos['Aventureros']['Guerrero']['descripcion'], '\n')
+
+# ===========================================
+#          FUNCIONES DE GESTION 
+# ===========================================
+
+# pequenas funciones de gestion de recursos utiles
+
+def mostrar_Aventureros ():
+    '''
+    Muestra la cantidad de Aventureros disponibles, el arma predilecta
+    y la descripcion 
+    '''
+    print('=== AVENTUREROS DISPONIBLES ===\n')
+    for aventurero, info in recursos['Aventureros'].items():
+        if info['cantidad'] != 0:
+            print(f'''{aventurero}: hay {info['cantidad']} disponibles, utiliza como arma: {info['arma_predilecta']},
+ {info['descripcion']}\n''')
+        else:
+            print(f'{aventurero} no se encuentra disponible\n')
+    return ''
+
+#print(mostrar_Aventureros())
+
