@@ -146,3 +146,18 @@ def mostrar_Aventureros ():
 
 #print(mostrar_Aventureros())
 
+def mostrar_Armas ():
+    '''
+    Muestra la cantidad de Armas disponibles, el tipo de Aventurero 
+    que la usa y la descripcion 
+    '''
+    print('\n=== ARMAS DISPONIBLES ===\n')
+    for arma, info in recursos['Armas'].items():
+        if info['cantidad'] != 0:
+            print(f'''{arma}: hay {info['cantidad']} disponibles, la utiliza: {info['tipo']},
+ {info['descripcion']}\n''')
+        else:
+            print(f'{arma} no se encuentra disponible\n')
+    return ''
+
+#print(mostrar_Armas())
