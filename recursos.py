@@ -85,7 +85,7 @@ recursos = {
     {
         'Cueva del Eco': 
         {
-            'disponible': False,
+            'disponible': True,
             'dificultad': 'C',
             'duracion_horas': 4,
             'descripcion': 'Mazmorra sencilla, ideal para expediciones rápidas.'
@@ -198,6 +198,32 @@ def mostrar_recursos_disponibles():
 
 #def liberar_recurso():
 
-#ocupar_mazmorra():
+def ocupar_mazmorra():
+    '''
+    Ocupa una mazmorra (pasa su disponibilidad a False)
+    '''
+    mazmorra_name = ''
 
-#liberar_mazmorra():
+    if mazmorra_name not in recursos['Mazmorras']:
+        return False
+    if not recursos['Mazmorras'][mazmorra_name]['disponible']:
+        return False
+    
+    recursos['Mazmorras'][mazmorra_name]['disponible'] = False
+
+    return True
+
+def liberar_mazmorra():
+    '''
+    Libera una mazmorra (pasa su disponibilidad a True)
+    '''
+    mazmorra_name = ''
+
+    if mazmorra_name not in recursos['Mazmorras']:
+        return False
+    if recursos['Mazmorras'][mazmorra_name]['disponible']:
+        return False
+    
+    recursos['Mazmorras'][mazmorra_name]['disponible'] = True
+
+    return True
