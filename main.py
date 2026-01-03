@@ -4,6 +4,8 @@
 
 # Importaciones de los módulos del proyecto
 
+import recursos
+
 # ===========================================
 # FUNCIÓN PRINCIPAL
 # ===========================================
@@ -27,7 +29,7 @@ def mostrar_menu():
         opcion = input('Selecciona una opción (1-6): ')
 
         if opcion == '1':
-            ver_recursos_disponibles()
+            recursos.mostrar_recursos_disponibles()
         elif opcion == '2':
             planificar_expedicion()
         elif opcion == '3':
@@ -45,17 +47,6 @@ def mostrar_menu():
 # ===========================================
 # FUNCIONES DEL MENÚ
 # ===========================================
-
-def ver_recursos_disponibles():
-    '''
-    Muestra los héroes, armas y mazmorras disponibles.
-    Más adelante se conectará con recursos.py.
-    '''
-    print('\n=== RECURSOS DISPONIBLES ===')
-    print('Héroes, armas y mazmorras aparecerán aquí.')
-    # TODO: Importar datos desde recursos.py o persistencia.json
-    # mostrar_recursos()
-
 
 def planificar_expedicion():
     '''

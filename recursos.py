@@ -11,7 +11,7 @@ recursos = {
     {
         'Guerrero': 
             {
-                'cantidad': 3,
+                'cantidad': 0,
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
             },
@@ -45,7 +45,7 @@ recursos = {
     {
         'Espada Larga': 
         {
-            'cantidad': 4,
+            'cantidad': 0,
             'descripcion': 'Armas versátiles para los guerreros.',
             'tipo': 'Guerrero'
         },
@@ -85,7 +85,7 @@ recursos = {
     {
         'Cueva del Eco': 
         {
-            'disponible': True,
+            'disponible': False,
             'dificultad': 'C',
             'duracion_horas': 4,
             'descripcion': 'Mazmorra sencilla, ideal para expediciones rápidas.'
@@ -130,39 +130,40 @@ recursos = {
 
 # pequenas funciones de gestion de recursos utiles
 
-def mostrar_Aventureros ():
+def mostrar_aventureros ():
     '''
     Muestra la cantidad de Aventureros disponibles, el arma predilecta
     y la descripcion 
     '''
     print('=== AVENTUREROS DISPONIBLES ===\n')
     for aventurero, info in recursos['Aventureros'].items():
-        if info['cantidad'] != 0:
-            print(f'''{aventurero}: hay {info['cantidad']} disponibles, utiliza como arma: {info['arma_predilecta']},
+        if info['cantidad'] > 0:
+            armas = ', '.join(info['arma_predilecta'])
+            print(f'''{aventurero}: hay {info['cantidad']} disponibles, utiliza como arma: {armas},
  {info['descripcion']}\n''')
         else:
             print(f'{aventurero} no se encuentra disponible\n')
     return ''
 
-#print(mostrar_Aventureros())
+#print(mostrar_aventureros())
 
-def mostrar_Armas ():
+def mostrar_armas ():
     '''
     Muestra la cantidad de Armas disponibles, el tipo de Aventurero 
     que la usa y la descripcion 
     '''
     print('\n=== ARMAS DISPONIBLES ===\n')
     for arma, info in recursos['Armas'].items():
-        if info['cantidad'] != 0:
-            print(f'''{arma}: hay {info['cantidad']} disponibles, la utiliza: {info['tipo']},
+        if info['cantidad'] > 0:
+            print(f'''{arma}: hay {info['cantidad']} disponibles, lo utiliza: {info['tipo']},
  {info['descripcion']}\n''')
         else:
             print(f'{arma} no se encuentra disponible\n')
     return ''
 
-#print(mostrar_Armas())
+#print(mostrar_armas())
 
-def mostrar_Mazmorras():
+def mostrar_mazmorras():
     '''
     Muestra las Mazmorras disponibles, su duracion en horas
     y su descripcion
@@ -176,18 +177,27 @@ def mostrar_Mazmorras():
             print(f'{mazmorra} no se encuentra disponible\n')
     return ''
 
-#print(mostrar_Mazmorras())
+#print(mostrar_mazmorras())
 
-def mostrar_recursos():
+def mostrar_recursos_disponibles():
     '''
-    Muestra todos los recursos con sus distintas stats
+    Muestra los héroes, armas y mazmorras disponibles.
     '''
-    print('\n=== RECURSOS ===\n')
-    f1 = mostrar_Aventureros()
-    f2 = mostrar_Armas()
-    f3 = mostrar_Mazmorras()
+    print('\n=== RECURSOS DISPONIBLES ===\n')
+    print('Héroes, armas y mazmorras aparecerán aquí.\n')
+    f1 = mostrar_aventureros()
+    f2 = mostrar_armas()
+    f3 = mostrar_mazmorras()
     f4 = f'\n{f1}\n{f2}\n{f3}\n'
     
     return ''
 
 #print(mostrar_recursos())
+
+#def usar_recurso():
+
+#def liberar_recurso():
+
+#ocupar_mazmorra():
+
+#liberar_mazmorra():
