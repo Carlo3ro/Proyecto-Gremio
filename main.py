@@ -3,7 +3,6 @@
 # ===========================================
 
 # Importaciones de los módulos del proyecto
-
 import recursos
 
 # ===========================================
