@@ -12,30 +12,35 @@ recursos = {
         'Guerrero': 
             {
                 'cantidad': 0,
+                'cantidad_max': 3,
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
             },
         'Mago': 
             {
                 'cantidad': 2,
+                'cantidad_max': 2,
                 'arma_predilecta': ['Baculo Magico'],
                 'descripcion': 'Eruditos del gremio, dominan las artes arcanas y la magia ofensiva.'
             },
         'Sanador': 
             {
                 'cantidad': 2,
+                'cantidad_max': 2,
                 'arma_predilecta': ['Baculo Sanador'],
                 'descripcion': 'Canalizan la energía divina para curar y proteger a sus aliados.'
             },
         'Arquero': 
             {
                 'cantidad': 2,
+                'cantidad_max': 2,
                 'arma_predilecta': ['Arco de Roble'],
                 'descripcion': 'Expertos del combate a distancia, veloces y precisos.'
             },
         'Picaro': 
             {
                 'cantidad': 2,
+                'cantidad_max': 2,
                 'arma_predilecta': ['Dagas Dobles'],
                 'descripcion': 'Maestros del sigilo, las trampas y la infiltración.'
             }
@@ -46,36 +51,42 @@ recursos = {
         'Espada Larga': 
         {
             'cantidad': 0,
+            'cantidad_max': 4,
             'descripcion': 'Armas versátiles para los guerreros.',
             'tipo': 'Guerrero'
         },
         'Escudo de Hierro': 
         {
             'cantidad': 2,
+            'cantidad_max': 2,
             'descripcion': 'Protege a los combatientes en primera línea.',
             'tipo': 'Guerrero'
         },
         'Baculo Magico': 
         {
             'cantidad': 2,
+            'cantidad_max': 2,
             'descripcion': 'Conduce la energía mágica de los magos.',
             'tipo': 'Mago'
         },
         'Baculo Sanador': 
         {
             'cantidad': 2,
+            'cantidad_max': 2,
             'descripcion': 'Canal de poder divino para los sanadores.',
             'tipo': 'Sanador'
         },
         'Arco de Roble': 
         {
             'cantidad': 2,
+            'cantidad_max': 2,
             'descripcion': 'Armas de precisión para los arqueros.',
             'tipo': 'Arquero'
         },
         'Dagas Dobles': 
         {
             'cantidad': 3,
+            'cantidad_max': 3,
             'descripcion': 'Armas ligeras para ataques rápidos y sigilosos.',
             'tipo': 'Picaro'
         }
@@ -121,9 +132,6 @@ recursos = {
     }
 }
 
-
-# print('\n', recursos['Aventureros']['Guerrero']['descripcion'], '\n')
-
 # ===========================================
 #          FUNCIONES DE GESTION 
 # ===========================================
@@ -145,8 +153,6 @@ def mostrar_aventureros ():
             print(f'{aventurero} no se encuentra disponible\n')
     return ''
 
-#print(mostrar_aventureros())
-
 def mostrar_armas ():
     '''
     Muestra la cantidad de Armas disponibles, el tipo de Aventurero 
@@ -160,8 +166,6 @@ def mostrar_armas ():
         else:
             print(f'{arma} no se encuentra disponible\n')
     return ''
-
-#print(mostrar_armas())
 
 def mostrar_mazmorras():
     '''
@@ -177,8 +181,6 @@ def mostrar_mazmorras():
             print(f'{mazmorra} no se encuentra disponible\n')
     return ''
 
-#print(mostrar_mazmorras())
-
 def mostrar_recursos_disponibles():
     '''
     Muestra los héroes, armas y mazmorras disponibles.
@@ -192,18 +194,46 @@ def mostrar_recursos_disponibles():
     
     return ''
 
-#print(mostrar_recursos())
+def usar_recurso(tipo, nombre, cant):
+    '''
+    Resta una cifra a la cantidad de un recurso
+    verifica si es menor a la cantidad disponible
+    
+    :param nombre: nombre del recurso
+    :param tipo: armas o aventureros
+    :param cantidad: numero a restar a la cantidad del recurso
+    '''
+    if tipo not in recursos:
+        return False
+    if nombre not in recursos[tipo]:
+        return False
+    if recursos[tipo][nombre]['cantidad'] < cant:
+        return False
+    recursos[tipo][nombre]['cantidad'] -= cant
 
-#def usar_recurso():
+def liberar_recurso(tipo, nombre, cant):
+    '''
+    Suma una cifra a la cantidad de un recurso
+    verifica si es mayor a la cantidad total
 
-#def liberar_recurso():
+    :param nombre: nombre del recurso
+    :param tipo: armas o aventureros
+    :param cantidad: numero a suma a la cantidad del recurso
+    '''
+    if tipo not in recursos:
+        return False
+    if nombre not in recursos[tipo]:
+        return False
+    if recursos[tipo][nombre]['cantidad'] + cant > recursos[tipo][nombre]['cantidad_total']:
+        return False
+    recursos[tipo][nombre]['cantidad'] += cant
 
-def ocupar_mazmorra():
+def ocupar_mazmorra(mazmorra_name):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
-    '''
-    mazmorra_name = ''
 
+    :param mazmorra_name: string q representa el nombre de la mazmorra
+    '''
     if mazmorra_name not in recursos['Mazmorras']:
         return False
     if not recursos['Mazmorras'][mazmorra_name]['disponible']:
@@ -213,12 +243,12 @@ def ocupar_mazmorra():
 
     return True
 
-def liberar_mazmorra():
+def liberar_mazmorra(mazmorra_name):
     '''
-    Libera una mazmorra (pasa su disponibilidad a True)
-    '''
-    mazmorra_name = ''
+    Ocupa una mazmorra (pasa su disponibilidad a False)
 
+    :param mazmorra_name: string q representa el nombre de la mazmorra
+    '''
     if mazmorra_name not in recursos['Mazmorras']:
         return False
     if recursos['Mazmorras'][mazmorra_name]['disponible']:
