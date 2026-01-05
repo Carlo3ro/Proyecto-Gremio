@@ -194,7 +194,7 @@ def mostrar_recursos_disponibles():
     
     return ''
 
-def usar_recurso(tipo, nombre, cant):
+def usar_recurso(tipo, nombre, cantidad):
     '''
     Resta una cifra a la cantidad de un recurso
     verifica si es menor a la cantidad disponible
@@ -207,11 +207,11 @@ def usar_recurso(tipo, nombre, cant):
         return False
     if nombre not in recursos[tipo]:
         return False
-    if recursos[tipo][nombre]['cantidad'] < cant:
+    if recursos[tipo][nombre]['cantidad'] < cantidad:
         return False
-    recursos[tipo][nombre]['cantidad'] -= cant
+    recursos[tipo][nombre]['cantidad'] -= cantidad
 
-def liberar_recurso(tipo, nombre, cant):
+def liberar_recurso(tipo, nombre, cantidad):
     '''
     Suma una cifra a la cantidad de un recurso
     verifica si es mayor a la cantidad total
@@ -224,9 +224,9 @@ def liberar_recurso(tipo, nombre, cant):
         return False
     if nombre not in recursos[tipo]:
         return False
-    if recursos[tipo][nombre]['cantidad'] + cant > recursos[tipo][nombre]['cantidad_total']:
+    if recursos[tipo][nombre]['cantidad'] + cantidad > recursos[tipo][nombre]['cantidad_total']:
         return False
-    recursos[tipo][nombre]['cantidad'] += cant
+    recursos[tipo][nombre]['cantidad'] += cantidad
 
 def ocupar_mazmorra(mazmorra_name):
     '''
