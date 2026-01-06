@@ -3,7 +3,7 @@
 # ===========================================
 
 # recursos.py
-# Este módulo contiene la base de datos de recursos del gremio:
+# Este modulo contiene la base de datos de recursos del gremio:
 # aventureros, armas y mazmorras disponibles.
 
 recursos = {

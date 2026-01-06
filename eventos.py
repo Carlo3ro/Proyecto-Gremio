@@ -3,7 +3,8 @@
 # ===========================================
 
 # evntos.py
-# Gestiona la creacion y el ciclo de vida de los eventos (expediciones)
+# Este modulo gestiona la creacion y el ciclo de vida de 
+# los eventos (expediciones)
 
 # Importaciones de los módulos del proyecto
 import recursos

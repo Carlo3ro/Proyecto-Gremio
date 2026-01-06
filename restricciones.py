@@ -1,0 +1,35 @@
+# ===========================================
+#    GUIA DE AVENTUREROS - RESTRICCIONES
+# ===========================================
+
+# restricciones.py
+# Este modulo contiene los requisitos necesarios
+# para comenzar una expedicion
+
+# ===========================================
+#          FUNCIONES DE GESTION 
+# ===========================================
+
+def validar_codependencia(aventureros_evento: dict, armas_evento: dict):
+    requisitos = {
+        "guerrero": ["Espada Larga", "Escudo de Hierro"],
+        "mago": ["Báculo Arcano"],
+        "sanador": ["Báculo Sanador"],
+        "arquero": ["Arco de Roble"],
+        "picaro": ["Dagas Dobles"]
+    }
+
+    for aventurero, cantidad in aventureros_evento.items():
+        if cantidad <= 0:
+            continue
+
+        if aventurero not in requisitos:
+            continue
+
+        armas_necesarias = requisitos[aventurero]
+
+        for arma in armas_necesarias:
+            if arma not in armas_evento or armas_evento[arma] <= 0:
+                return False, f"Falta {arma} para el {aventurero}"
+
+    return True, "Co-dependencia válida"
