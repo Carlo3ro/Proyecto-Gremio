@@ -4,6 +4,7 @@
 
 # Importaciones de los módulos del proyecto
 import recursos
+import eventos
 
 # ===========================================
 # FUNCIÓN PRINCIPAL
@@ -59,7 +60,6 @@ def planificar_expedicion():
     # 2. Validar con validacion.py
     # 3. Registrar evento con eventos.py
 
-
 def consultar_eventos_activos():
     '''
     Muestra la lista de expediciones en curso.
@@ -68,7 +68,6 @@ def consultar_eventos_activos():
     print('Aquí se listarán las expediciones activas.')
     # TODO: Leer eventos desde eventos.py o persistencia.json
     # listar_eventos()
-
 
 def avanzar_tiempo_gremio():
     '''
@@ -82,7 +81,6 @@ def avanzar_tiempo_gremio():
     # 2. Actualizar eventos y liberar recursos terminados
     # avanzar_tiempo()
 
-
 def guardar_progreso():
     '''
     Guarda el estado actual del gremio (recursos, eventos, tiempo).
@@ -92,7 +90,6 @@ def guardar_progreso():
     # TODO:
     # 1. Guardar datos actuales en persistencia.json
     # guardar_datos()
-
 
 def salir_del_gremio():
     '''

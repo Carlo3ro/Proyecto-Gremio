@@ -1,5 +1,5 @@
 # ===========================================
-#      LIBRO DE REGISTRO - EVENTO
+#        LIBRO DE REGISTRO - EVENTOS
 # ===========================================
 
 # evntos.py
@@ -43,8 +43,8 @@ def crear_evento(mazmorra_name, recursos_usados, duracion_horas):
 
     recursos.ocupar_mazmorra(mazmorra_name)
 
-    for tipo, recursos in recursos_usados.items():
-        for nombre, cantidad in recursos.items():
+    for tipo, aventureros in recursos_usados.items():
+        for nombre, cantidad in aventureros.items():
             recursos.usar_recurso(tipo, nombre, cantidad)
 
     eventos_activos[id_evento] = evento
@@ -61,8 +61,8 @@ def finalizar_evento(id_evento):
 
     evento = eventos_activos[id_evento]
 
-    for tipo, recursos in evento["recursos_usados"].items():
-        for nombre, cantidad in recursos.items():
+    for tipo, aventureros in evento["recursos_usados"].items():
+        for nombre, cantidad in aventureros.items():
             recursos.liberar_recurso(tipo, nombre, cantidad)
 
     recursos.liberar_mazmorra(evento["mazmorra"])
@@ -82,11 +82,18 @@ def listar_historial():
     Mostrar expediciones finalizadas
     '''
 
-def avanzar_tiempo():
+def avanzar_tiempo(horas):
     '''
-    restar tiempo a eventos activos
-    detectar eventos terminados
-    finalizarlos automaticamente
+    Restar tiempo a los eventos activos, detecta eventos terminados
+    y los finaliza automaticamente
     '''
+    eventos_a_finalizar = []
 
+    for id_evento, evento in eventos_activos.items():
+        evento["tiempo_restante"] -= horas
+        if evento["tiempo_restante"] <= 0:
+            eventos_a_finalizar.append(id_evento)
+
+    for id_evento in eventos_a_finalizar:
+        finalizar_evento(id_evento)
 

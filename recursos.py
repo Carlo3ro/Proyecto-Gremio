@@ -143,7 +143,6 @@ def mostrar_aventureros ():
     Muestra la cantidad de Aventureros disponibles, el arma predilecta
     y la descripcion 
     '''
-    print('=== AVENTUREROS DISPONIBLES ===\n')
     for aventurero, info in recursos['Aventureros'].items():
         if info['cantidad'] > 0:
             armas = ', '.join(info['arma_predilecta'])
@@ -158,7 +157,6 @@ def mostrar_armas ():
     Muestra la cantidad de Armas disponibles, el tipo de Aventurero 
     que la usa y la descripcion 
     '''
-    print('\n=== ARMAS DISPONIBLES ===\n')
     for arma, info in recursos['Armas'].items():
         if info['cantidad'] > 0:
             print(f'''{arma}: hay {info['cantidad']} disponibles, lo utiliza: {info['tipo']},
@@ -172,7 +170,6 @@ def mostrar_mazmorras():
     Muestra las Mazmorras disponibles, su duracion en horas
     y su descripcion
     '''
-    print('\n=== MAZMORRAS DISPONIBLES ===\n')
     for mazmorra, info in recursos['Mazmorras'].items():
         if info['disponible'] == True:
             print(f'''{mazmorra}: se encuentra disponible, tarda {info['duracion_horas']} horas en completarse,
@@ -185,8 +182,6 @@ def mostrar_recursos_disponibles():
     '''
     Muestra los héroes, armas y mazmorras disponibles.
     '''
-    print('\n=== RECURSOS DISPONIBLES ===\n')
-    print('Héroes, armas y mazmorras aparecerán aquí.\n')
     f1 = mostrar_aventureros()
     f2 = mostrar_armas()
     f3 = mostrar_mazmorras()
@@ -198,10 +193,6 @@ def usar_recurso(tipo, nombre, cantidad):
     '''
     Resta una cifra a la cantidad de un recurso
     verifica si es menor a la cantidad disponible
-    
-    :param nombre: nombre del recurso
-    :param tipo: armas o aventureros
-    :param cantidad: numero a restar a la cantidad del recurso
     '''
     if tipo not in recursos:
         return False
@@ -215,10 +206,6 @@ def liberar_recurso(tipo, nombre, cantidad):
     '''
     Suma una cifra a la cantidad de un recurso
     verifica si es mayor a la cantidad total
-
-    :param nombre: nombre del recurso
-    :param tipo: armas o aventureros
-    :param cantidad: numero a suma a la cantidad del recurso
     '''
     if tipo not in recursos:
         return False
@@ -231,8 +218,6 @@ def liberar_recurso(tipo, nombre, cantidad):
 def ocupar_mazmorra(mazmorra_name):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
-
-    :param mazmorra_name: string q representa el nombre de la mazmorra
     '''
     if mazmorra_name not in recursos['Mazmorras']:
         return False
@@ -246,8 +231,6 @@ def ocupar_mazmorra(mazmorra_name):
 def liberar_mazmorra(mazmorra_name):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
-
-    :param mazmorra_name: string q representa el nombre de la mazmorra
     '''
     if mazmorra_name not in recursos['Mazmorras']:
         return False
