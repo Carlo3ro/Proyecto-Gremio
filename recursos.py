@@ -7,7 +7,7 @@
 # aventureros, armas y mazmorras disponibles.
 
 recursos = {
-    'Aventureros': 
+    'aventureros': 
     {
         'guerrero': 
             {
@@ -46,7 +46,7 @@ recursos = {
             }
     },
 
-    'Armas': 
+    'armas': 
     {
         'Espada Larga': 
         {
@@ -92,7 +92,7 @@ recursos = {
         }
     },
 
-    'Mazmorras': 
+    'mazmorras': 
     {
         'Cueva del Eco': 
         {
@@ -138,56 +138,58 @@ recursos = {
 
 # pequenas funciones de gestion de recursos utiles
 
-def mostrar_aventureros ():
-    '''
-    Muestra la cantidad de Aventureros disponibles, el arma predilecta
-    y la descripcion 
-    '''
-    for aventurero, info in recursos['Aventureros'].items():
+def obtener_aventureros_disponibles():
+    disponibles = {}
+
+    for nombre, info in recursos['aventureros'].items():
         if info['cantidad'] > 0:
-            armas = ', '.join(info['arma_predilecta'])
-            print(f'''{aventurero}: hay {info['cantidad']} disponibles, utiliza como arma: {armas},
- {info['descripcion']}\n''')
-        else:
-            print(f'{aventurero} no se encuentra disponible\n')
-    return ''
+            disponibles[nombre] = {
+                'cantidad': info['cantidad'],
+                'armas': info['arma_predilecta'],
+                'descripcion': info['descripcion']
+            }
 
-def mostrar_armas ():
-    '''
-    Muestra la cantidad de Armas disponibles, el tipo de Aventurero 
-    que la usa y la descripcion 
-    '''
-    for arma, info in recursos['Armas'].items():
+    return disponibles
+
+# si la cantidad del aventurero <= 0 la def devuelve un
+# dict vacio pq del for salta para el return disponibles 
+
+def obtener_armas_disponibles():
+    disponibles = {}
+
+    for nombre, info in recursos['armas'].items():
         if info['cantidad'] > 0:
-            print(f'''{arma}: hay {info['cantidad']} disponibles, lo utiliza: {info['tipo']},
- {info['descripcion']}\n''')
-        else:
-            print(f'{arma} no se encuentra disponible\n')
-    return ''
+            disponibles[nombre] = {
+                'cantidad': info['cantidad'],
+                'aventurero': info['tipo'],
+                'descripcion': info['descripcion']
+            }
 
-def mostrar_mazmorras():
-    '''
-    Muestra las Mazmorras disponibles, su duracion en horas
-    y su descripcion
-    '''
-    for mazmorra, info in recursos['Mazmorras'].items():
-        if info['disponible'] == True:
-            print(f'''{mazmorra}: se encuentra disponible, tarda {info['duracion_horas']} horas en completarse,
- {info['descripcion']}\n''')
-        else:
-            print(f'{mazmorra} no se encuentra disponible\n')
-    return ''
+    return disponibles
 
-def mostrar_recursos_disponibles():
-    '''
-    Muestra los héroes, armas y mazmorras disponibles.
-    '''
-    f1 = mostrar_aventureros()
-    f2 = mostrar_armas()
-    f3 = mostrar_mazmorras()
-    f4 = f'\n{f1}\n{f2}\n{f3}\n'
-    
-    return ''
+def obtener_mazmorras_disponibles():
+    disponibles = {}
+
+    for nombre, info in recursos['mazmorras'].items():
+        if info['disponible']:
+            disponibles[nombre] = {
+                'disponible': info['disponible'],
+                'dificultad': info['dificultad'],
+                'duracion_horas': info['duracion_horas'],
+                'descripcion': info['descripcion']
+            }
+
+    return disponibles
+
+def obtener_todas_las_mazmorras():
+    return recursos['mazmorras']
+
+def obtener_recursos_disponibles():
+    return {
+        'aventureros': obtener_aventureros_disponibles(),
+        'armas': obtener_armas_disponibles(),
+        'mazmorras': obtener_mazmorras_disponibles()
+    }
 
 def usar_recurso(tipo, nombre, cantidad):
     '''
@@ -219,12 +221,12 @@ def ocupar_mazmorra(mazmorra_name):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
-    if mazmorra_name not in recursos['Mazmorras']:
+    if mazmorra_name not in recursos['mazmorras']:
         return False
-    if not recursos['Mazmorras'][mazmorra_name]['disponible']:
+    if not recursos['mazmorras'][mazmorra_name]['disponible']:
         return False
     
-    recursos['Mazmorras'][mazmorra_name]['disponible'] = False
+    recursos['mazmorras'][mazmorra_name]['disponible'] = False
 
     return True
 
@@ -232,11 +234,11 @@ def liberar_mazmorra(mazmorra_name):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
-    if mazmorra_name not in recursos['Mazmorras']:
+    if mazmorra_name not in recursos['mazmorras']:
         return False
-    if recursos['Mazmorras'][mazmorra_name]['disponible']:
+    if recursos['mazmorras'][mazmorra_name]['disponible']:
         return False
     
-    recursos['Mazmorras'][mazmorra_name]['disponible'] = True
+    recursos['mazmorras'][mazmorra_name]['disponible'] = True
 
     return True
