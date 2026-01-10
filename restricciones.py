@@ -12,7 +12,8 @@
 
 def validar_codependencia(aventureros_evento: dict, armas_evento: dict):
     '''
-    Docstring for validar_codependencia
+    Valida si los aventureros tienen las armas
+    necesarias
     '''
     requisitos = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
@@ -27,7 +28,7 @@ def validar_codependencia(aventureros_evento: dict, armas_evento: dict):
             continue
 
         if aventurero not in requisitos:
-            continue
+            return False, f'No hay requisitos definidos para {aventurero}'
 
         armas_necesarias = requisitos[aventurero]
 
@@ -39,7 +40,7 @@ def validar_codependencia(aventureros_evento: dict, armas_evento: dict):
 
 def validar_aventureros_unicos (aventureros_evento: dict):
     '''
-    Docstring for validar_aventureros_unicos
+    Verifica si no hay aventureros duplicados
     '''
     for aventurero, cantidad in aventureros_evento.items():
         if cantidad > 1:
@@ -48,7 +49,8 @@ def validar_aventureros_unicos (aventureros_evento: dict):
 
 def validar_compatibilidad_aventurero_arma(aventureros_evento: dict, armas_evento: dict):
     '''
-    Docstring for validar_compatibilidad_aventurero_arma
+    Valida si las armas seleccionadas puedes
+    ser usadas por los aventureros
     '''
     compatibilidad = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
@@ -58,14 +60,16 @@ def validar_compatibilidad_aventurero_arma(aventureros_evento: dict, armas_event
         'picaro': ['Dagas Dobles']
     }
 
-    armas_permitidas = set()
+    armas_seleccionadas = set()
 
     for aventurero, cantidad in aventureros_evento.items():
+        if aventurero not in compatibilidad:
+            return False, f'No hay requisitos definidos para: {aventurero}'
         if cantidad > 0 and aventurero in compatibilidad:
-            armas_permitidas.update(compatibilidad[aventurero])
+            armas_seleccionadas.update(compatibilidad[aventurero])
 
     for arma, cantidad in armas_evento.items():
-        if cantidad > 0 and arma not in armas_permitidas:
+        if cantidad > 0 and arma not in armas_seleccionadas:
             return False, f'El arma {arma} no es compatible con los aventureros seleccionados'
 
     return True, 'Compatibilidad aventurero-arma válida'
