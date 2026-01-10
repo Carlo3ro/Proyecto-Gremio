@@ -9,35 +9,35 @@
 recursos = {
     'Aventureros': 
     {
-        'Guerrero': 
+        'guerrero': 
             {
                 'cantidad': 0,
                 'cantidad_max': 3,
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
             },
-        'Mago': 
+        'mago': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
                 'arma_predilecta': ['Baculo Magico'],
                 'descripcion': 'Eruditos del gremio, dominan las artes arcanas y la magia ofensiva.'
             },
-        'Sanador': 
+        'sanador': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
                 'arma_predilecta': ['Baculo Sanador'],
                 'descripcion': 'Canalizan la energía divina para curar y proteger a sus aliados.'
             },
-        'Arquero': 
+        'arquero': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
                 'arma_predilecta': ['Arco de Roble'],
                 'descripcion': 'Expertos del combate a distancia, veloces y precisos.'
             },
-        'Picaro': 
+        'picaro': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
