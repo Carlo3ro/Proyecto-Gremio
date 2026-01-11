@@ -6,7 +6,12 @@
 # Verifica si los eventos pueden exitir en el sistema
 # Guardian del sitema 
 
+# IMPORTACIONES
 import restricciones
+
+# ===========================================
+#          FUNCIONES DE GESTION 
+# ===========================================
 
 def validar_evento(evento: dict, recursos: dict):
 

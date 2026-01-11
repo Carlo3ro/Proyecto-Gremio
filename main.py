@@ -1,8 +1,15 @@
 # ===========================================
-# GREMIO DE AVENTUREROS - MENÚ PRINCIPAL
+#   GREMIO DE AVENTUREROS - MENÚ PRINCIPAL
 # ===========================================
 
-# Importaciones de los módulos del proyecto
+# VARIABLES DE ESTADO
+eventos_activos = {}
+eventos_historial = {}
+siguiente_id = 1
+reloj = {'dia': 0, 'hora': 0}
+ejecutando = True
+
+# IMPORTACIONES
 import recursos
 import eventos
 
@@ -14,7 +21,7 @@ def mostrar_menu():
     '''
     Muestra el menú principal del gremio y gestiona la selección del usuario.
     '''
-    while True:
+    while ejecutando:
         print('\n' + '='*45)
         print('GREMIO DE AVENTUREROS - MENÚ PRINCIPAL')
         print('='*45)
@@ -40,7 +47,7 @@ def mostrar_menu():
             guardar_progreso()
         elif opcion == '6':
             salir_del_gremio()
-            break
+            ejecutando == False
         else:
             print('\nOpción no válida. Intenta de nuevo.')
 

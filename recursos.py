@@ -136,8 +136,6 @@ recursos = {
 #          FUNCIONES DE GESTION 
 # ===========================================
 
-# pequenas funciones de gestion de recursos utiles
-
 def obtener_aventureros_disponibles():
     disponibles = {}
 

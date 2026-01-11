@@ -2,27 +2,12 @@
 #        LIBRO DE REGISTRO - EVENTOS
 # ===========================================
 
-# evntos.py
+# eventos.py
 # Este modulo gestiona la creacion y el ciclo de vida de 
 # los eventos (expediciones)
 
-# Importaciones de los módulos del proyecto
+# IMPORTACIONES
 import recursos
-
-# Variables globales
-
-tiempo_actual = 0
-eventos_activos = {}
-eventos_historial = {}
-siguiente_id = 1
-
-# cada evento tiene:
-# - id
-# - mazmorra
-# - recursos_usados
-# - duracion_horas
-# - tiempo_restante
-# - estado (activo o finalizado)
 
 # ===========================================
 #          FUNCIONES DE GESTION 
@@ -57,16 +42,17 @@ def crear_evento(mazmorra_name, recursos_usados, duracion_horas):
 
     return id_evento
 
-def finalizar_evento(id_evento):
+def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: dict):
     '''
     Finaliza eventos q pasan a ser guardados en el historial de evntos
     '''
-    global eventos_activos, eventos_historial
-
     if id_evento not in eventos_activos:
-        return False, 'Evento no encontrado'
+        return False, 'Evento no existe'
 
     evento = eventos_activos[id_evento]
+
+    if evento.get('estado') != 'activo':
+        return False, 'El evento ya fue finalizado'
 
     for tipo, aventurero_o_arma in evento['recursos_usados'].items():
         for nombre, cantidad in aventurero_o_arma.items():
@@ -79,14 +65,12 @@ def finalizar_evento(id_evento):
     eventos_historial[id_evento] = evento
     del eventos_activos[id_evento]
 
-    return True, 'Evento finalizado correctamente'
+    return True, f'Evento {id_evento} finalizado correctamente'
 
-def listar_eventos_activos(tiempo_actual):
+def listar_eventos_activos(eventos_activos):
     '''
     Mostrar eventos activos
     '''
-    global eventos_activos
-
     if not eventos_activos:
         return []
     
@@ -102,26 +86,42 @@ def listar_eventos_activos(tiempo_actual):
 
     return eventos_vigentes
 
-def listar_historial():
+def listar_historial(eventos_historial):
     '''
     Mostrar expediciones finalizadas
     '''
     return list(eventos_historial.values())
 
-def avanzar_tiempo(horas = 24):
+def avanzar_tiempo(horas: int, eventos_activos: dict, historial: dict, reloj: dict):
     '''
     Restar tiempo a los eventos activos, detecta eventos terminados
     y los finaliza automaticamente
     '''
+    if horas <= 0:
+        return False, "Las horas deben ser positivas"
+
+    # Avanzar reloj
+    reloj['hora'] += horas
+
+    while reloj['hora'] >= 24:
+        reloj['hora'] -= 24
+        reloj['dia'] += 1
+
     eventos_a_finalizar = []
 
     for id_evento, evento in eventos_activos.items():
+        if evento['estado'] != 'activo':
+            continue
+
         evento['tiempo_restante'] -= horas
+
         if evento['tiempo_restante'] <= 0:
             eventos_a_finalizar.append(id_evento)
 
     for id_evento in eventos_a_finalizar:
-        finalizar_evento(id_evento)
+        finalizar_evento(id_evento, eventos_activos, historial)
+
+    return True, f"Tiempo avanzado {horas} horas"
 
 # ===========================================
 #                 EJEMPLOS
@@ -171,13 +171,13 @@ def avanzar_tiempo(horas = 24):
 #         'estado': 'activo'
 #     }
 
-#recursos_usados = {
-    #   'aventureros':{
-    #       'guerrero': 1,
-    #       'sanador': 1
-    #   },
-    #   'armas':{
-    #       'Espada Larga': 1,
-    #       'Baculo Sanador': 1
-    #   }
-    #}
+# recursos_usados = {
+#       'aventureros':{
+#           'guerrero': 1,
+#           'sanador': 1
+#       },
+#       'armas':{
+#           'Espada Larga': 1,
+#           'Baculo Sanador': 1
+#       }
+#     }
