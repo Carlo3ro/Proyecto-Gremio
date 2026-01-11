@@ -1,33 +1,37 @@
 # ===========================================
-#      ALMACEN DEL GREMIO - RECURSOS
+#         LA POSADA - PERSISTENCIA
 # ===========================================
 
-# recursos.py
-# Este modulo contiene la base de datos de recursos del gremio:
-# aventureros, armas y mazmorras disponibles.
+# persistencia.py
+# Encargado de guardar y cargar el estado del programa
 
 # IMPORTACIONES
 import json
 import os
 
 # ===========================================
-#          FUNCIONES DE GESTION 
+#           FUNCIONES DE GESTION 
 # ===========================================
 
-def guardar_estado(ruta: str, recursos: dict, eventos_activos: dict, historial: dict, reloj: dict):
-    datos = {
-        'recursos': recursos,
-        'eventos_activos': eventos_activos,
-        'historial': historial,
-        'reloj': reloj
-    }
+import json
+import os
 
-    with open(ruta, 'w', encoding='utf-8') as f:
-        json.dump(datos, f, indent=4, ensure_ascii=False)
 
-def cargar_estado(ruta: str):
-    if not os.path.exists(ruta):
+def guardar_estado(estado: dict, archivo: str = 'datos.json') -> None:
+    '''
+    Guarda el estado completo del programa en un archivo JSON.
+    '''
+    with open(archivo, 'w', encoding='utf-8') as f:
+        json.dump(estado, f, indent=4, ensure_ascii=False)
+
+
+def cargar_estado(archivo: str = 'datos.json') -> dict | None:
+    '''
+    Carga el estado del programa desde un archivo JSON.
+    Devuelve None si el archivo no existe.
+    '''
+    if not os.path.exists(archivo):
         return None
 
-    with open(ruta, 'r', encoding='utf-8') as f:
+    with open(archivo, 'r', encoding='utf-8') as f:
         return json.load(f)

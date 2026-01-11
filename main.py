@@ -3,11 +3,13 @@
 # ===========================================
 
 # VARIABLES DE ESTADO
-eventos_activos = {}
-eventos_historial = {}
-siguiente_id = 1
-reloj = {'dia': 0, 'hora': 0}
-ejecutando = True
+estado = {
+    'eventos_activos': {},
+    'eventos_historial': {},
+    'siguiente_id': 1,
+    'reloj': {'dia': 0, 'hora': 0},
+    'ejecutando': True
+}
 
 # IMPORTACIONES
 import recursos

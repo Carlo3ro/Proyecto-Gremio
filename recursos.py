@@ -189,54 +189,56 @@ def obtener_recursos_disponibles():
         'mazmorras': obtener_mazmorras_disponibles()
     }
 
-def usar_recurso(tipo, nombre, cantidad):
+def usar_recurso(tipo: str, nombre: str, cantidad: int):
     '''
     Resta una cifra a la cantidad de un recurso
     verifica si es menor a la cantidad disponible
     '''
     if tipo not in recursos:
-        return False
+        return False, 'Tipo de recurso invalido'
     if nombre not in recursos[tipo]:
-        return False
+        return False, 'Recurso no existe'
     if recursos[tipo][nombre]['cantidad'] < cantidad:
-        return False
+        return False, 'Cantidad insuficiente'
     recursos[tipo][nombre]['cantidad'] -= cantidad
+    return True, 'Recurso utilizado correctamente'
 
-def liberar_recurso(tipo, nombre, cantidad):
+def liberar_recurso(tipo: str, nombre: str, cantidad: int):
     '''
     Suma una cifra a la cantidad de un recurso
     verifica si es mayor a la cantidad total
     '''
     if tipo not in recursos:
-        return False
+        return False, 'Tipo de recurso invalido'
     if nombre not in recursos[tipo]:
-        return False
+        return False, 'Recurso no existe'
     if recursos[tipo][nombre]['cantidad'] + cantidad > recursos[tipo][nombre]['cantidad_total']:
-        return False
+        return False, 'No se pueden liberar mas recursos de los existentes'
     recursos[tipo][nombre]['cantidad'] += cantidad
+    return True, 'Recurso liberado correctamente'
 
-def ocupar_mazmorra(mazmorra_name):
+def ocupar_mazmorra(mazmorra_name: str):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
     if mazmorra_name not in recursos['mazmorras']:
-        return False
+        return False, 'Mazmorra no existe'
     if not recursos['mazmorras'][mazmorra_name]['disponible']:
-        return False
+        return False, 'La mazmorra ya esta ocupada'
     
     recursos['mazmorras'][mazmorra_name]['disponible'] = False
 
-    return True
+    return True, 'Mazmorra ocupada correctamente'
 
-def liberar_mazmorra(mazmorra_name):
+def liberar_mazmorra(mazmorra_name: str):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
     if mazmorra_name not in recursos['mazmorras']:
-        return False
+        return False, 'Mazmorra no existe'
     if recursos['mazmorras'][mazmorra_name]['disponible']:
-        return False
+        return False, 'Mamorra ya esta libre'
     
     recursos['mazmorras'][mazmorra_name]['disponible'] = True
 
-    return True
+    return True, 'Mazmorra liberada correctamente'
