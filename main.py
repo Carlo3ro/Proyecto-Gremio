@@ -142,7 +142,7 @@ def planificar_expedicion():
 
     # 4. CREAR EVENTO
     ok, resultado = eventos.crear_evento(
-        mazmorra,
+        #mazmorra,
         recursos_usados,
         duracion,
         siguiente_id,
