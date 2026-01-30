@@ -2,27 +2,38 @@
 #   GREMIO DE AVENTUREROS - MENÚ PRINCIPAL
 # ===========================================
 
-# VARIABLES DE ESTADO
-estado = {
-    'eventos_activos': {},
-    'eventos_historial': {},
-    'siguiente_id': 1,
-    'reloj': {'dia': 0, 'hora': 0},
-    'ejecutando': True
-}
-
 # IMPORTACIONES
 import recursos
 import eventos
+import persistencia
 
 # ===========================================
-# FUNCIÓN PRINCIPAL
+#         INICIALIZACION DEL ESTADO
 # ===========================================
 
-def mostrar_menu():
+def crear_estado_inical():
+    return {
+        'recursos': recursos.recursos,
+        'eventos_activos': {},
+        'eventos_historial': {},
+        'siguente_id': 1,
+        'reloj': {'dia': 1, 'hora': 8}
+    }
+
+estado = persistencia.cargar_estado()
+if estado is None:
+    estado = crear_estado_inical()
+
+# ===========================================
+#            FUNCIÓN PRINCIPAL
+# ===========================================
+
+def mostrar_menu(estado: dict):
     '''
     Muestra el menú principal del gremio y gestiona la selección del usuario.
     '''
+    ejecutando = True
+
     while ejecutando:
         print('\n' + '='*45)
         print('GREMIO DE AVENTUREROS - MENÚ PRINCIPAL')
@@ -31,87 +42,124 @@ def mostrar_menu():
         print('2. Planificar una nueva expedición')
         print('3. Consultar eventos activos')
         print('4. Pasar al día siguiente / Avanzar tiempo')
-        print('5. Guardar progreso (Ir a la posada a dormir)')
+        print('5. Guardar progreso (Ir a la posada)')
         print('6. Salir del gremio')
         print('='*45)
         
         opcion = input('Selecciona una opción (1-6): ')
 
         if opcion == '1':
-            recursos.mostrar_recursos_disponibles()
+            recursos.mostrar_recursos_disponibles(estado['recursos'])
+
         elif opcion == '2':
-            planificar_expedicion()
+            pass
+
         elif opcion == '3':
-            consultar_eventos_activos()
+            eventos.listar_eventos_activos(estado['eventos_activos'])
+
         elif opcion == '4':
-            avanzar_tiempo_gremio()
+            eventos.avanzar_tiempo(
+                estado['eventos_activos'],
+                estado['eventos_historial'],
+                estado['recursos'],
+                estado['reloj']
+            )
         elif opcion == '5':
-            guardar_progreso()
+            persistencia.guardar_estado(estado)
+            print('\nHas descansado en la posada. Progreso guardado.')
+
         elif opcion == '6':
-            salir_del_gremio()
-            ejecutando == False
+            ejecutando = confirmar_salida(estado)
+
         else:
             print('\nOpción no válida. Intenta de nuevo.')
 
 # ===========================================
-# FUNCIONES DEL MENÚ
+#         SALIDA CON CORFIMACION
+# ===========================================  
+
+def confirmar_salida (estado: dict) -> bool:
+    print('\nDeseas guardar antes de salir?')
+    print('1. Guardar y salir')
+    print('2. Salir sin guardar')
+    print('3. Cancelar')
+
+    opcion = input('Selecciona una opcion (1-3): ')
+
+    if opcion == '1':
+        persistencia.guardar_estado(estado)
+        print('\nProgreso guardado. Hasta la Proxima!')
+        return False
+    
+    elif opcion == '2':
+        print('\nSales del gremio sin guardar')
+        return False
+    
+    elif opcion == '3':
+        print('\nSalida cancelada')
+        return True
+    
+    else:
+        print('\nOpcion no valida')
+        return True
+
+# ===========================================
+#           FUNCIONES DEL MENU
 # ===========================================
 
 def planificar_expedicion():
-    '''
-    Permite crear una nueva expedición (evento).
-    Debe pedir al usuario la mazmorra, los héroes y las armas.
-    '''
+
+    global siguiente_id, eventos_activos
+
     print('\n=== PLANIFICAR EXPEDICIÓN ===')
-    print('Aquí se pedirá la mazmorra, héroes y armas.')
-    # TODO:
-    # 1. Pedir datos al usuario
-    # 2. Validar con validacion.py
-    # 3. Registrar evento con eventos.py
 
-def consultar_eventos_activos():
-    '''
-    Muestra la lista de expediciones en curso.
-    '''
-    print('\n=== EVENTOS ACTIVOS ===')
-    print('Aquí se listarán las expediciones activas.')
-    # TODO: Leer eventos desde eventos.py o persistencia.json
-    # listar_eventos()
+    # RECURSOS
+    recursos_usados = {
+        'aventureros': {},
+        'armas': {}
+    }
 
-def avanzar_tiempo_gremio():
-    '''
-    Avanza el tiempo del sistema.
-    Permite al usuario decidir cuántas horas o días pasar.
-    '''
-    print('\n=== AVANZAR TIEMPO ===')
-    print('Aquí se podrá avanzar el tiempo dentro del gremio.')
-    # TODO:
-    # 1. Pedir cantidad de horas o días
-    # 2. Actualizar eventos y liberar recursos terminados
-    # avanzar_tiempo()
+    print('\n--- Aventureros ---')
+    while True:
+        nombre = input('Nombre del aventurero (enter para terminar): ').strip()
+        if nombre == '':
+            break
+        cantidad = int(input('Cantidad: '))
+        if cantidad > 0:
+            recursos_usados['aventureros'][nombre] = cantidad
 
-def guardar_progreso():
-    '''
-    Guarda el estado actual del gremio (recursos, eventos, tiempo).
-    '''
-    print('\nGuardando progreso...')
-    print('Has ido a la posada a descansar. El progreso se ha guardado.')
-    # TODO:
-    # 1. Guardar datos actuales en persistencia.json
-    # guardar_datos()
+    print('\n--- Armas ---')
+    while True:
+        nombre = input('Nombre del arma (enter para terminar): ').strip()
+        if nombre == '':
+            break
+        cantidad = int(input('Cantidad: '))
+        if cantidad > 0:
+            recursos_usados['armas'][nombre] = cantidad
 
-def salir_del_gremio():
-    '''
-    Sale del programa.
-    '''
-    print('\nEl gremio cierra sus puertas por hoy...')
-    print('¡Hasta la próxima expedición, aventurero!\n')
-    # guardar = input('¿Deseas guardar antes de salir? (s/n): ')
-    # if guardar.lower() == 's':
-    #     guardar_progreso()
+    # 3. DURACIÓN
+    duracion = int(input('\nDuración de la expedición (horas): '))
+
+    # 4. CREAR EVENTO
+    ok, resultado = eventos.crear_evento(
+        mazmorra,
+        recursos_usados,
+        duracion,
+        siguiente_id,
+        eventos_activos
+    )
+
+    # 5. RESULTADO
+    if not ok:
+        print(f'\nError: {resultado}')
+        return
+
+    print(f'\nExpedición creada con ID {resultado}')
+    siguiente_id += 1
 
 # ===========================================
-# PUNTO DE ENTRADA
+#            PUNTO DE ENTRADA
 # ===========================================
+
 if __name__ == '__main__':
-    mostrar_menu()
+    mostrar_menu(estado)

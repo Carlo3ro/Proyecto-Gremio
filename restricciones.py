@@ -10,11 +10,14 @@
 #          FUNCIONES DE GESTION 
 # ===========================================
 
-def validar_codependencia(aventureros_evento: dict, armas_evento: dict):
+def validar_codependencia(recursos_usados: dict):
     '''
     Valida si los aventureros tienen las armas
     necesarias
     '''
+    aventureros_evento = recursos_usados['aventureros']
+    armas_evento = recursos_usados['armas']
+
     requisitos = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
         'mago': ['Báculo Arcano'],
@@ -47,11 +50,14 @@ def validar_aventureros_unicos (aventureros_evento: dict):
             return False, f'No se permiten multiples {aventurero}s en el mismo evento'
     return True, 'Aventureros unicos validados'
 
-def validar_compatibilidad_aventurero_arma(aventureros_evento: dict, armas_evento: dict):
+def validar_compatibilidad_aventurero_arma(recursos_usados: dict):
     '''
     Valida si las armas seleccionadas puedes
     ser usadas por los aventureros
     '''
+    aventureros_evento = recursos_usados['aventureros']
+    armas_evento = recursos_usados['armas']
+
     compatibilidad = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
         'mago': ['Báculo Arcano'],

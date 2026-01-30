@@ -8,15 +8,41 @@
 
 # IMPORTACIONES
 import recursos
+import restricciones
 
 # ===========================================
 #          FUNCIONES DE GESTION 
 # ===========================================
 
-def crear_evento(mazmorra_name: str, recursos_usados: dict, duracion_horas: int, siguiente_id: int, eventos_activos: dict):
-    '''
-    Crea eventos q pasan a ser guardados como eventos activos
-    '''
+def crear_evento(
+    mazmorra_name: str,
+    recursos_usados: dict,
+    duracion_horas: int,
+    siguiente_id: int,
+    eventos_activos: dict
+):
+    """
+    Intenta crear un evento (expedición).
+    Retorna:
+        (True, id_evento) si se creó
+        (False, mensaje_error) si falló
+    """
+    if not recursos.mazmorra_disponible(mazmorra_name):
+        return False, 'La mazmorra no esta disponible'
+
+    for tipo, recursos_tipo in recursos_usados.items():
+        for nombre, cantidad in recursos_tipo.items():
+            if not recursos.recurso_disponible(tipo, nombre, cantidad):
+                return False, f'Recurso insuficiente: {nombre}'
+
+    ok, msg = restricciones.validar_codependencia(recursos_usados)
+    if not ok:
+        return False, msg
+
+    ok, msg = restricciones.validar_compatibilidad_aventurero_arma(recursos_usados)
+    if not ok:
+        return False, msg
+
     id_evento = siguiente_id
 
     evento = {
@@ -36,9 +62,7 @@ def crear_evento(mazmorra_name: str, recursos_usados: dict, duracion_horas: int,
 
     eventos_activos[id_evento] = evento
 
-    siguiente_id += 1
-
-    return id_evento
+    return True, id_evento
 
 def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: dict):
     '''

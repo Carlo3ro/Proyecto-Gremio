@@ -13,10 +13,6 @@ import os
 #           FUNCIONES DE GESTION 
 # ===========================================
 
-import json
-import os
-
-
 def guardar_estado(estado: dict, archivo: str = 'datos.json') -> None:
     '''
     Guarda el estado completo del programa en un archivo JSON.

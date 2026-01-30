@@ -149,9 +149,6 @@ def obtener_aventureros_disponibles():
 
     return disponibles
 
-# si la cantidad del aventurero <= 0 la def devuelve un
-# dict vacio pq del for salta para el return disponibles 
-
 def obtener_armas_disponibles():
     disponibles = {}
 
@@ -231,6 +228,7 @@ def ocupar_mazmorra(mazmorra_name: str):
     return True, 'Mazmorra ocupada correctamente'
 
 def liberar_mazmorra(mazmorra_name: str):
+
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
@@ -242,3 +240,107 @@ def liberar_mazmorra(mazmorra_name: str):
     recursos['mazmorras'][mazmorra_name]['disponible'] = True
 
     return True, 'Mazmorra liberada correctamente'
+
+# ===========================================
+#         NUMERADORES DE RECURSOS
+# ===========================================
+
+def seleccionar_mazmorra():
+
+    mazmorras_disponibles = obtener_mazmorras_disponibles()
+
+    if not mazmorras_disponibles:
+        return None, 'No hay mazmorras disponibles'
+
+    print('\n=== MAZMORRAS DISPONIBLES ===')
+
+    for i, nombre in enumerate(mazmorras_disponibles, start=1):
+        info = mazmorras_disponibles[nombre]
+        print(f'{i}. {nombre}| Duración: {info['duracion_horas']}h')
+
+    opcion = input('Mazmorra (número, enter para terminar):  ').strip()
+
+    if not opcion.isdigit():
+        return None, 'Debes ingresar un numero'
+    
+    idx = int(opcion)
+
+    if idx < 1 or idx > len(mazmorras_disponibles):
+        return None, 'Opcion fuera de rango'
+    
+    return mazmorras_disponibles[opcion - 1], None
+
+def seleccionar_aventureros():
+    seleccion = set()
+
+    aventureros_disponibles = obtener_aventureros_disponibles()
+
+    if not aventureros_disponibles:
+        return None, 'No hay aventureros disponibles'
+
+    print('\n=== AVENTUREROS DISPONIBLES ===')
+    for i, nombre in enumerate(aventureros_disponibles, start=1):
+        print(f'{i}. {nombre}')
+
+    while True:
+        opcion = input('Aventurero (número, enter para terminar): ').strip()
+        if opcion == '':
+            break
+
+        if not opcion.isdigit():
+            print('Debes ingresar un número')
+            continue
+
+        idx = int(opcion)
+        if idx < 1 or idx > len(aventureros_disponibles):
+            print('Opción fuera de rango')
+            continue
+
+        nombre = aventureros_disponibles[idx - 1]
+
+        if nombre in seleccion:
+            print('Ese aventurero ya fue seleccionado')
+            continue
+
+        seleccion.add(nombre)
+
+    if not seleccion:
+        return None, 'No se seleccionaron aventureros'
+
+    return list(seleccion), None
+
+def seleccionar_armas():
+    seleccion = set()
+
+    armas_disponibles = obtener_armas_disponibles()
+
+    if not armas_disponibles:
+        return [], None
+
+    print('\n=== ARMAS DISPONIBLES ===')
+    for i, nombre in enumerate(armas_disponibles, start=1):
+        print(f'{i}. {nombre}')
+
+    while True:
+        opcion = input('Arma (número, enter para terminar): ').strip()
+        if opcion == '':
+            break
+
+        if not opcion.isdigit():
+            print('Debes ingresar un número')
+            continue
+
+        idx = int(opcion)
+        if idx < 1 or idx > len(armas_disponibles):
+            print('Opción fuera de rango')
+            continue
+
+        nombre = armas_disponibles[idx - 1]
+
+        if nombre in seleccion:
+            print('Esa arma ya fue seleccionada')
+            continue
+
+        seleccion.add(nombre)
+
+    return list(seleccion), None
