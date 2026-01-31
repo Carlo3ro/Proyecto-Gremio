@@ -49,6 +49,7 @@ def mostrar_menu(estado: dict):
         opcion = input('Selecciona una opción (1-6): ')
 
         if opcion == '1':
+            #TODO
             recursos.mostrar_recursos_disponibles(estado['recursos'])
 
         elif opcion == '2':
@@ -109,47 +110,48 @@ def confirmar_salida (estado: dict) -> bool:
 
 def planificar_expedicion():
 
-    global siguiente_id, eventos_activos
-
+    siguiente_id = estado['siguente_id']
+    eventos_activos = estado['eventos']
+        
     print('\n=== PLANIFICAR EXPEDICIÓN ===')
+
+    # MAZMORRA
+    mazmorra, error = recursos.seleccionar_mazmorra()
+    if error:
+        print(f'{error}')
+        return
+    
+    # DURACION
+    duracion = recursos.obtener_duracion_mazmorra(mazmorra)
+    
+    # AVENTUREROS
+    aventureros, error = recursos.seleccionar_aventureros()
+    if error:
+        print(f'{error}')
+        return
+    
+    # ARMAS
+    print('\nCada aventurero debe tener un arma compatible')
+    armas, error = recursos.seleccionar_armas()
+    if error:
+        print(f'{error}')
+        return
 
     # RECURSOS
     recursos_usados = {
-        'aventureros': {},
-        'armas': {}
+        'aventureros': aventureros,
+        'armas': armas
     }
 
-    print('\n--- Aventureros ---')
-    while True:
-        nombre = input('Nombre del aventurero (enter para terminar): ').strip()
-        if nombre == '':
-            break
-        cantidad = int(input('Cantidad: '))
-        if cantidad > 0:
-            recursos_usados['aventureros'][nombre] = cantidad
-
-    print('\n--- Armas ---')
-    while True:
-        nombre = input('Nombre del arma (enter para terminar): ').strip()
-        if nombre == '':
-            break
-        cantidad = int(input('Cantidad: '))
-        if cantidad > 0:
-            recursos_usados['armas'][nombre] = cantidad
-
-    # 3. DURACIÓN
-    duracion = int(input('\nDuración de la expedición (horas): '))
-
-    # 4. CREAR EVENTO
+    # CREAR EVENTO
     ok, resultado = eventos.crear_evento(
-        #mazmorra,
+        mazmorra,
         recursos_usados,
         duracion,
         siguiente_id,
         eventos_activos
     )
 
-    # 5. RESULTADO
     if not ok:
         print(f'\nError: {resultado}')
         return

@@ -176,6 +176,9 @@ def obtener_mazmorras_disponibles():
 
     return disponibles
 
+def obtener_duracion_mazmorra(mazmorra: str) -> int:
+    return recursos['mazmorras'][mazmorra]['duracion_horas']
+
 def obtener_todas_las_mazmorras():
     return recursos['mazmorras']
 
@@ -214,30 +217,30 @@ def liberar_recurso(tipo: str, nombre: str, cantidad: int):
     recursos[tipo][nombre]['cantidad'] += cantidad
     return True, 'Recurso liberado correctamente'
 
-def ocupar_mazmorra(mazmorra_name: str):
+def ocupar_mazmorra(mazmorra: str):
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
-    if mazmorra_name not in recursos['mazmorras']:
+    if mazmorra not in recursos['mazmorras']:
         return False, 'Mazmorra no existe'
-    if not recursos['mazmorras'][mazmorra_name]['disponible']:
+    if not recursos['mazmorras'][mazmorra]['disponible']:
         return False, 'La mazmorra ya esta ocupada'
     
-    recursos['mazmorras'][mazmorra_name]['disponible'] = False
+    recursos['mazmorras'][mazmorra]['disponible'] = False
 
     return True, 'Mazmorra ocupada correctamente'
 
-def liberar_mazmorra(mazmorra_name: str):
+def liberar_mazmorra(mazmorra: str):
 
     '''
     Ocupa una mazmorra (pasa su disponibilidad a False)
     '''
-    if mazmorra_name not in recursos['mazmorras']:
+    if mazmorra not in recursos['mazmorras']:
         return False, 'Mazmorra no existe'
-    if recursos['mazmorras'][mazmorra_name]['disponible']:
+    if recursos['mazmorras'][mazmorra]['disponible']:
         return False, 'Mamorra ya esta libre'
     
-    recursos['mazmorras'][mazmorra_name]['disponible'] = True
+    recursos['mazmorras'][mazmorra]['disponible'] = True
 
     return True, 'Mazmorra liberada correctamente'
 
@@ -315,9 +318,11 @@ def seleccionar_armas():
     armas_disponibles = obtener_armas_disponibles()
 
     if not armas_disponibles:
-        return [], None
+        return None, 'No hay armas disponibles'
 
     print('\n=== ARMAS DISPONIBLES ===')
+    print('\nCada aventurero debe de tener un arma compatible')
+    print('\nSelecciona un arma por cada aventurero')
     for i, nombre in enumerate(armas_disponibles, start=1):
         print(f'{i}. {nombre}')
 
@@ -342,5 +347,8 @@ def seleccionar_armas():
             continue
 
         seleccion.add(nombre)
+
+    if not seleccion:
+        return None, 'Debes seleccionar un arma para cada aventurero'
 
     return list(seleccion), None

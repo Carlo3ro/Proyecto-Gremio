@@ -8,14 +8,13 @@
 
 # IMPORTACIONES
 import recursos
-import restricciones
-
+import validacion
 # ===========================================
 #          FUNCIONES DE GESTION 
 # ===========================================
 
 def crear_evento(
-    mazmorra_name: str,
+    mazmorra: str,
     recursos_usados: dict,
     duracion_horas: int,
     siguiente_id: int,
@@ -27,39 +26,36 @@ def crear_evento(
         (True, id_evento) si se creó
         (False, mensaje_error) si falló
     """
-    if not recursos.mazmorra_disponible(mazmorra_name):
-        return False, 'La mazmorra no esta disponible'
 
-    for tipo, recursos_tipo in recursos_usados.items():
-        for nombre, cantidad in recursos_tipo.items():
-            if not recursos.recurso_disponible(tipo, nombre, cantidad):
-                return False, f'Recurso insuficiente: {nombre}'
-
-    ok, msg = restricciones.validar_codependencia(recursos_usados)
+    # VALIDACION 
+    ok, msg = validacion.validar_evento(
+        mazmorra,
+        recursos_usados,
+        duracion_horas,
+        eventos_activos
+    )
     if not ok:
-        return False, msg
-
-    ok, msg = restricciones.validar_compatibilidad_aventurero_arma(recursos_usados)
-    if not ok:
-        return False, msg
-
+        return False, msg 
+    
+    # CREAR EVENTO
     id_evento = siguiente_id
-
     evento = {
         'id': id_evento,
-        'mazmorra': mazmorra_name,
+        'mazmorra': mazmorra,
         'recursos_usados': recursos_usados,
         'duracion_horas': duracion_horas,
         'tiempo_restante': duracion_horas,
         'estado': 'activo'
     }
 
-    recursos.ocupar_mazmorra(mazmorra_name)
+    # OCUPAR RECURSOS
+    recursos.ocupar_mazmorra(mazmorra)
 
     for tipo, recursos_tipo in recursos_usados.items():
         for nombre, cantidad in recursos_tipo.items():
             recursos.usar_recurso(tipo, nombre, cantidad)
 
+    # REGISTRAR EVENTO
     eventos_activos[id_evento] = evento
 
     return True, id_evento
