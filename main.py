@@ -50,7 +50,7 @@ def mostrar_menu(estado: dict):
 
         if opcion == '1':
             #TODO
-            recursos.mostrar_recursos_disponibles(estado['recursos'])
+            recursos.mostrar_recursos_disponibles()
 
         elif opcion == '2':
             pass

@@ -133,7 +133,7 @@ recursos = {
 }
 
 # ===========================================
-#          FUNCIONES DE GESTION 
+#      FUNCIONES DE OBTENER RECURSOS 
 # ===========================================
 
 def obtener_aventureros_disponibles():
@@ -188,6 +188,61 @@ def obtener_recursos_disponibles():
         'armas': obtener_armas_disponibles(),
         'mazmorras': obtener_mazmorras_disponibles()
     }
+
+# ===========================================
+#        FUNCIONES DE MOSTAR RECURSOS
+# ===========================================
+
+def mostrar_aventureros():
+    print('\n=== AVENTUREROS DISPONIBLES ===\n')
+
+    if not recursos['aventureros']:
+        print('No hay aventureros registrados')
+        return
+    
+    for nombre, datos in recursos['aventureros'].items():
+        if datos['cantidad'] <= 0:
+            print(f'-{nombre}: No disponible\n')
+        else:
+            print(f'''- {nombre} | Cantidad: {datos['cantidad']}
+{datos['descripcion']}\n''')
+
+def mostrar_armas():
+    print('\n=== ARMAS DISPONIBLES ===\n')
+
+    if not recursos['armas']:
+        print('No hay armas registradas')
+        return
+    
+    for nombre, datos in recursos['armas'].items():
+        if datos['cantidad'] <= 0:
+            print(f'''-{nombre}: No disponible\n''')
+        else:
+            print(f'''- {nombre} | Cantidad: {datos['cantidad']}
+{datos['descripcion']}\n''')
+
+def mostrar_mazmorras():
+    print('\n=== MAZMORRAS DISPONIBLES ===\n')
+
+    if not recursos['mazmorras']:
+        print('No hay mazmorras registradas')
+        return
+    
+    for nombre, datos in recursos['mazmorras'].items():
+        if not datos['disponible']:
+            print(f'- {nombre}: Ocupada\n')
+        else:
+            print(f'''- {nombre} | Duracion: {datos['duracion_horas']}
+Descripcion: {datos['descripcion']}\n''')
+        
+def mostrar_recursos_disponibles():
+    mostrar_aventureros()
+    mostrar_armas()
+    mostrar_mazmorras()
+
+# ===========================================
+#          FUNCIONES DE GESTION 
+# ===========================================
 
 def usar_recurso(tipo: str, nombre: str, cantidad: int):
     '''
@@ -248,7 +303,7 @@ def liberar_mazmorra(mazmorra: str):
 #         NUMERADORES DE RECURSOS
 # ===========================================
 
-def seleccionar_mazmorra():
+def seleccionar_mazmorra() -> str:
 
     mazmorras_disponibles = obtener_mazmorras_disponibles()
 
@@ -257,11 +312,11 @@ def seleccionar_mazmorra():
 
     print('\n=== MAZMORRAS DISPONIBLES ===')
 
-    for i, nombre in enumerate(mazmorras_disponibles, start=1):
+    for idx, nombre in enumerate(mazmorras_disponibles, start=1):
         info = mazmorras_disponibles[nombre]
-        print(f'{i}. {nombre}| Duración: {info['duracion_horas']}h')
+        print(f'{idx}. {nombre}| Duración: {info['duracion_horas']}h')
 
-    opcion = input('Mazmorra (número, enter para terminar):  ').strip()
+    opcion = input('Elija el numero de la Mazmorra (enter para terminar la seleccion): ').strip()
 
     if not opcion.isdigit():
         return None, 'Debes ingresar un numero'
@@ -273,20 +328,23 @@ def seleccionar_mazmorra():
     
     return mazmorras_disponibles[opcion - 1], None
 
-def seleccionar_aventureros():
-    seleccion = set()
+def seleccionar_aventureros() -> dict:
 
     aventureros_disponibles = obtener_aventureros_disponibles()
 
     if not aventureros_disponibles:
-        return None, 'No hay aventureros disponibles'
-
-    print('\n=== AVENTUREROS DISPONIBLES ===')
-    for i, nombre in enumerate(aventureros_disponibles, start=1):
-        print(f'{i}. {nombre}')
+        print('No hay aventureros disponibles')
+        return {}
+    
+    seleccionados = {}
 
     while True:
-        opcion = input('Aventurero (número, enter para terminar): ').strip()
+        print('\n=== AVENTUREROS DISPONIBLES ===')
+        for idx, nombre in enumerate(aventureros_disponibles, start=1):
+            if nombre not in seleccionados:
+                print(f'{idx}. {nombre}')
+
+        opcion = input('Elija el numero del Aventurero (enter para terminar la seleccion): ').strip()
         if opcion == '':
             break
 
@@ -294,40 +352,40 @@ def seleccionar_aventureros():
             print('Debes ingresar un número')
             continue
 
-        idx = int(opcion)
-        if idx < 1 or idx > len(aventureros_disponibles):
+        idx = int(opcion) - 1
+        
+        if idx < 0 or idx >= len(aventureros_disponibles):
             print('Opción fuera de rango')
             continue
+            #TODO probar
 
-        nombre = aventureros_disponibles[idx - 1]
+        nombre = aventureros_disponibles[idx]
 
-        if nombre in seleccion:
+        if nombre in seleccionados:
             print('Ese aventurero ya fue seleccionado')
             continue
 
-        seleccion.add(nombre)
+        seleccionados[nombre] = 1
 
-    if not seleccion:
-        return None, 'No se seleccionaron aventureros'
+    return seleccionados
 
-    return list(seleccion), None
-
-def seleccionar_armas():
-    seleccion = set()
+def seleccionar_armas() -> dict:
 
     armas_disponibles = obtener_armas_disponibles()
 
     if not armas_disponibles:
-        return None, 'No hay armas disponibles'
+        print('No hay armas disponibles')
+        return {}
 
-    print('\n=== ARMAS DISPONIBLES ===')
-    print('\nCada aventurero debe de tener un arma compatible')
-    print('\nSelecciona un arma por cada aventurero')
-    for i, nombre in enumerate(armas_disponibles, start=1):
-        print(f'{i}. {nombre}')
+    seleccionados = {}
 
     while True:
-        opcion = input('Arma (número, enter para terminar): ').strip()
+        print('\n=== ARMAS DISPONIBLES ===')
+        for idx, nombre in enumerate(armas_disponibles, start=1):
+            if nombre not in seleccionados:    
+                print(f'{idx}. {nombre}')
+
+        opcion = input('Elija el numero del Arma (enter para terminar la seleccion): ').strip()
         if opcion == '':
             break
 
@@ -335,20 +393,17 @@ def seleccionar_armas():
             print('Debes ingresar un número')
             continue
 
-        idx = int(opcion)
-        if idx < 1 or idx > len(armas_disponibles):
+        idx = int(opcion) - 1
+        if idx < 0 or idx >= len(armas_disponibles):
             print('Opción fuera de rango')
             continue
 
-        nombre = armas_disponibles[idx - 1]
+        nombre = armas_disponibles[idx]
 
-        if nombre in seleccion:
+        if nombre in seleccionados:
             print('Esa arma ya fue seleccionada')
             continue
+            
+        seleccionados[nombre] = 1
 
-        seleccion.add(nombre)
-
-    if not seleccion:
-        return None, 'Debes seleccionar un arma para cada aventurero'
-
-    return list(seleccion), None
+    return seleccionados
