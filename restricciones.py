@@ -20,8 +20,8 @@ def validar_codependencia(recursos_usados: dict):
 
     requisitos = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
-        'mago': ['Báculo Arcano'],
-        'sanador': ['Báculo Sanador'],
+        'mago': ['Baculo Magico'],
+        'sanador': ['Baculo Sanador'],
         'arquero': ['Arco de Roble'],
         'picaro': ['Dagas Dobles']
     }
@@ -60,8 +60,8 @@ def validar_compatibilidad_aventurero_arma(recursos_usados: dict):
 
     compatibilidad = {
         'guerrero': ['Espada Larga', 'Escudo de Hierro'],
-        'mago': ['Báculo Arcano'],
-        'sanador': ['Báculo Sanador'],
+        'mago': ['Baculo Magico'],
+        'sanador': ['Baculo Sanador'],
         'arquero': ['Arco de Roble'],
         'picaro': ['Dagas Dobles']
     }

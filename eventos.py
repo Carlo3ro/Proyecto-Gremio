@@ -9,14 +9,16 @@
 # IMPORTACIONES
 import recursos
 import validacion
+
 # ===========================================
-#          FUNCIONES DE GESTION 
+#           FUNCIONES DE GESTION 
 # ===========================================
 
 def crear_evento(
     mazmorra: str,
     recursos_usados: dict,
     duracion_horas: int,
+    reloj: dict,
     siguiente_id: int,
     eventos_activos: dict
 ):
@@ -32,28 +34,32 @@ def crear_evento(
         mazmorra,
         recursos_usados,
         duracion_horas,
-        eventos_activos
     )
     if not ok:
         return False, msg 
     
-    # CREAR EVENTO
-    id_evento = siguiente_id
-    evento = {
-        'id': id_evento,
-        'mazmorra': mazmorra,
-        'recursos_usados': recursos_usados,
-        'duracion_horas': duracion_horas,
-        'tiempo_restante': duracion_horas,
-        'estado': 'activo'
-    }
-
     # OCUPAR RECURSOS
     recursos.ocupar_mazmorra(mazmorra)
 
     for tipo, recursos_tipo in recursos_usados.items():
         for nombre, cantidad in recursos_tipo.items():
             recursos.usar_recurso(tipo, nombre, cantidad)
+    
+    # CALCULAR DIN DEL EVENTO
+    inicio_hora = reloj['dia'] * 24 + reloj['hora']
+    fin_hora = inicio_hora + duracion_horas
+
+    # CREAR EVENTO
+    id_evento = siguiente_id
+    evento = {
+        'id': id_evento,
+        'mazmorra': mazmorra,
+        'recursos_usados': recursos_usados,
+        'inicio': inicio_hora,
+        'fin': fin_hora,
+        'tiempo_restante': duracion_horas,
+        'estado': 'activo'
+    }
 
     # REGISTRAR EVENTO
     eventos_activos[id_evento] = evento
@@ -64,78 +70,81 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
     '''
     Finaliza eventos q pasan a ser guardados en el historial de evntos
     '''
-    if id_evento not in eventos_activos:
-        return False, 'Evento no existe'
-    
-    evento = eventos_activos[id_evento]
+    evento = eventos_activos.pop(id_evento)
 
-    if evento.get('estado') != 'activo':
-        return False, 'El evento ya fue finalizado'
+    # LIBERAR MAZMORRA
+
+    recursos.liberar_mazmorra(evento['mazmorra'])
+
+    # LIBERAR RECURSOS USADOS
 
     for tipo, aventurero_o_arma in evento['recursos_usados'].items():
         for nombre, cantidad in aventurero_o_arma.items():
             recursos.liberar_recurso(tipo, nombre, cantidad)
     
-    recursos.liberar_mazmorra(evento['mazmorra'])
+    # FINALIZACION DE EVENTO
 
     evento['estado'] = 'finalizado'
-
     eventos_historial[id_evento] = evento
-    del eventos_activos[id_evento]
 
     return True, f'Evento {id_evento} finalizado correctamente'
 
-def listar_eventos_activos(eventos_activos: dict):
-    '''
-    Mostrar eventos activos
-    '''
-    if not eventos_activos:
-        return []
-    
-    eventos_vigentes = []
-
-    for evento in eventos_activos.values():
-        if evento['estado'] == 'activo':
-            eventos_vigentes.append({
-                'id': evento['id'],
-                'mazmorra': evento['mazmorra'],
-                'tiempo_restante': evento['tiempo_restante']
-            })
-
-    return eventos_vigentes
-
-def listar_historial(eventos_historial: dict):
-    '''
-    Mostrar expediciones finalizadas
-    '''
-    return list(eventos_historial.values())
-
-def avanzar_tiempo(horas: int, eventos_activos: dict, historial: dict, reloj: dict):
+def avanzar_tiempo(horas: int, reloj: dict, eventos_activos: dict, eventos_historial: dict):
     '''
     Restar tiempo a los eventos activos, detecta eventos terminados
     y los finaliza automaticamente
     '''
     if horas <= 0:
-        return False, "Las horas deben ser positivas"
-
+        return []
+    
+    # AVANZAR TIEMPO
     reloj['hora'] += horas
 
     while reloj['hora'] >= 24:
         reloj['hora'] -= 24
         reloj['dia'] += 1
 
-    eventos_a_finalizar = []
+    tiempo_actual = reloj['dia'] * 24 + reloj['hora']
 
+    eventos_finalizados = []
+
+    # DETECTAR EVENTOS TERMINADOS
+
+    for id_evento, evento in list(eventos_activos.items()):
+        if evento['fin'] <= tiempo_actual:
+            finalizar_evento(
+                id_evento,
+                eventos_activos,
+                eventos_historial
+            )
+            eventos_finalizados.append(id_evento)
+    
+
+    return eventos_finalizados
+    
+# ===========================================
+#           FUNCIONES DE LISTADO
+# ===========================================
+
+def listar_eventos_activos(eventos_activos: dict):
+    '''
+    Mostrar eventos activos
+    '''
+    if not eventos_activos:
+        print('No hay eventos activos')
+        return
+
+    print('\n=== EVENTOS ACTIVOS ===')
     for id_evento, evento in eventos_activos.items():
-        if evento['estado'] != 'activo':
-            continue
+        print(f'''
+ID: {id_evento}
+Mazmorra: {evento['mazmorra']}
+Tiempo restante: {evento['tiempo_restante']}horas
+Estado: {evento['estado']}
+''')
 
-        evento['tiempo_restante'] -= horas
-
-        if evento['tiempo_restante'] <= 0:
-            eventos_a_finalizar.append(id_evento)
-
-    for id_evento in eventos_a_finalizar:
-        finalizar_evento(id_evento, eventos_activos, historial)
-
-    return True, f"Tiempo avanzado {horas} horas"
+def listar_historial(eventos_historial: dict):
+    '''
+    Mostrar expediciones finalizadas
+    '''
+    return list(eventos_historial.values())

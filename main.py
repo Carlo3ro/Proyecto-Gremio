@@ -16,7 +16,7 @@ def crear_estado_inical():
         'recursos': recursos.recursos,
         'eventos_activos': {},
         'eventos_historial': {},
-        'siguente_id': 1,
+        'siguiente_id': 1,
         'reloj': {'dia': 1, 'hora': 8}
     }
 
@@ -53,18 +53,13 @@ def mostrar_menu(estado: dict):
             recursos.mostrar_recursos_disponibles()
 
         elif opcion == '2':
-            pass
+            planificar_expedicion()
 
         elif opcion == '3':
             eventos.listar_eventos_activos(estado['eventos_activos'])
 
         elif opcion == '4':
-            eventos.avanzar_tiempo(
-                estado['eventos_activos'],
-                estado['eventos_historial'],
-                estado['recursos'],
-                estado['reloj']
-            )
+            avanzar_tiempo_gremio()
         elif opcion == '5':
             persistencia.guardar_estado(estado)
             print('\nHas descansado en la posada. Progreso guardado.')
@@ -110,32 +105,30 @@ def confirmar_salida (estado: dict) -> bool:
 
 def planificar_expedicion():
 
-    siguiente_id = estado['siguente_id']
-    eventos_activos = estado['eventos']
-        
+    siguiente_id = estado['siguiente_id'] 
+    eventos_activos = estado['eventos_activos']
+    reloj = estado['reloj']    
+
     print('\n=== PLANIFICAR EXPEDICIÓN ===')
 
     # MAZMORRA
     mazmorra, error = recursos.seleccionar_mazmorra()
     if error:
-        print(f'{error}')
+        print(error)
         return
     
-    # DURACION
-    duracion = recursos.obtener_duracion_mazmorra(mazmorra)
+    # DURACIÓN
+    duracion_horas = recursos.obtener_duracion_mazmorra(mazmorra)
     
     # AVENTUREROS
-    aventureros, error = recursos.seleccionar_aventureros()
-    if error:
-        print(f'{error}')
-        return
-    
+    aventureros = recursos.seleccionar_aventureros()
+    if not aventureros:
+        print('No se seleccionaron aventureros')
     # ARMAS
     print('\nCada aventurero debe tener un arma compatible')
-    armas, error = recursos.seleccionar_armas()
-    if error:
-        print(f'{error}')
-        return
+    armas = recursos.seleccionar_armas()
+    if not armas:
+        print('No se seleccionaron armas')
 
     # RECURSOS
     recursos_usados = {
@@ -147,7 +140,8 @@ def planificar_expedicion():
     ok, resultado = eventos.crear_evento(
         mazmorra,
         recursos_usados,
-        duracion,
+        duracion_horas,
+        reloj,
         siguiente_id,
         eventos_activos
     )
@@ -157,8 +151,38 @@ def planificar_expedicion():
         return
 
     print(f'\nExpedición creada con ID {resultado}')
-    siguiente_id += 1
 
+    # ACTUALIZAR ESTADO GLOBAL
+    estado['siguiente_id'] += 1
+
+def consultar_eventos_activos():
+    evento = eventos.listar_eventos_activos(estado['eventos_activos'])
+    if not evento:
+        print('\nNo hay expediciones activas')
+        return
+    
+    print('\n=== EVENTOS ACTIVOS ===')
+    for i in evento:
+        print(
+            f'ID {i['id']} | Mazmorra: {i['mazmorra']} |'
+            f'Tiempo restante: {i['tiempo restante']}h'
+        )
+
+def avanzar_tiempo_gremio():
+    print('=== AVANZAR TIEMPO ===')
+
+    horas = int(input('\nCuantas horas deseas avanzar?: '))
+
+    finalizados = eventos.avanzar_tiempo(
+        horas,
+        estado['reloj'],
+        estado['eventos_activos'],
+        estado['eventos_historial'],
+    )
+    if finalizados:
+        print(f'Se finalizaron {len(finalizados)} expediciones')
+    else:
+        print('No termino ninguna expedicion')
 # ===========================================
 #            PUNTO DE ENTRADA
 # ===========================================

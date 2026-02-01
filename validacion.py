@@ -10,45 +10,61 @@
 import restricciones
 
 # ===========================================
-#          FUNCIONES DE GESTION 
+#          FUNCIONES DE VALIDACION
 # ===========================================
 
-def validar_evento(evento: dict, recursos: dict):
+import recursos
+import restricciones
 
-    aventureros_evento = evento.get('aventureros', {})
-    armas_evento = evento.get('armas', {})
-    mazmorra = evento.get('mazmorra')
+def validar_evento(
+    mazmorra: str,
+    recursos_usados: dict,
+    duracion_horas: int,
+):
+    aventureros_evento = recursos_usados.get('aventureros', {})
+    armas_evento = recursos_usados.get('armas', {})
 
-    # Compatibilidad aventurero - arma
-    ok, msg = restricciones.validar_compatibilidad_aventurero_arma(
-        aventureros_evento,
-        armas_evento
-    )
-    if not ok:
-        return False, msg
-
-    # Co-dependencia
-    ok, msg = restricciones.validar_codependencia(
-        aventureros_evento,
-        armas_evento
-    )
-    if not ok:
-        return False, msg
-
-    # Recursos disponibles
-    for aventurero, cant in aventureros_evento.items():
-        if recursos['aventureros'][aventurero]['cantidad'] < cant:
-            return False, f"No hay suficientes {aventurero}s disponibles"
-
-    for arma, cant in armas_evento.items():
-        if recursos['armas'][arma]['cantidad'] < cant:
-            return False, f"No hay suficientes {arma}s disponibles"
-
-    # Mazmorra válida y libre
-    if mazmorra not in recursos['mazmorras']:
+    # 1. Mazmorra valida
+    if mazmorra not in recursos.recursos['mazmorras']:
         return False, "Mazmorra inexistente"
 
-    if not recursos['mazmorras'][mazmorra]['disponible']:
+    if not recursos.recursos['mazmorras'][mazmorra]['disponible']:
         return False, "Mazmorra ocupada"
+
+    # 2. Aventureros
+    if not aventureros_evento:
+        return False, "Debe haber al menos un aventurero"
+
+    # 3. Armas
+    if not armas_evento:
+        return False, "Los aventureros no pueden ir sin armas"
+
+    if len(armas_evento) < len(aventureros_evento):
+        return False, "Cada aventurero debe tener un arma"
+
+    # 4. Compatibilidad aventurero - arma
+    ok, msg = restricciones.validar_compatibilidad_aventurero_arma(recursos_usados)
+    if not ok:
+        return False, msg
+
+    # 5. Co-dependencia
+    ok, msg = restricciones.validar_codependencia(recursos_usados)
+    if not ok:
+        return False, msg
+
+    # 6. Disponibilidad de recursos
+    for nombre, cant in aventureros_evento.items():
+        disponible = recursos.recursos['aventureros'].get(nombre, {}).get('cantidad', 0)
+        if disponible <= 0:
+            return False, f"No hay suficientes {nombre}s disponibles"
+
+    for nombre, cant in armas_evento.items():
+        disponible = recursos.recursos['armas'].get(nombre, {}).get('cantidad', 0)
+        if disponible <= 0:
+            return False, f"No hay suficientes {nombre}s disponibles"
+
+    # 7. Duracion
+    if duracion_horas <= 0:
+        return False, "Duración inválida"
 
     return True, "Evento válido"
