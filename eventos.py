@@ -71,7 +71,7 @@ def crear_evento(
 
     return True, id_evento
 
-def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: dict):
+def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: dict, stock: dict):
     '''
     Finaliza eventos q pasan a ser guardados en el historial de evntos
     '''
@@ -89,7 +89,7 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
     
     # RECOMPENSAS
     recompensas_evento = recompensas.generar_recompensas(evento['dificultad'])
-    recursos.aplicar_recompensas(recompensas_evento)
+    recursos.aplicar_recompensas(recompensas_evento, stock)
 
     print('\nRecompensas obtenidas:')
     for nombre, cant in recompensas_evento.items():
@@ -103,11 +103,16 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
 
     return True, f'Evento {id_evento} finalizado correctamente'
 
-def avanzar_tiempo(horas: int, reloj: dict, eventos_activos: dict, eventos_historial: dict):
+def avanzar_tiempo(horas: int, estado: dict):
     '''
     Restar tiempo a los eventos activos, detecta eventos terminados
     y los finaliza automaticamente
     '''
+    eventos_activos = estado['eventos_activos'] 
+    eventos_historial = estado['eventos_historial']
+    stock = estado['stock']
+    reloj = estado['reloj']
+    
     if horas <= 0:
         return []
     
@@ -129,7 +134,8 @@ def avanzar_tiempo(horas: int, reloj: dict, eventos_activos: dict, eventos_histo
             finalizar_evento(
                 id_evento,
                 eventos_activos,
-                eventos_historial
+                eventos_historial,
+                stock 
             )
             eventos_finalizados.append(id_evento)
     

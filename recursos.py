@@ -306,11 +306,9 @@ def liberar_mazmorra(mazmorra: str):
 
     return True, 'Mazmorra liberada correctamente'
 
-def aplicar_recompensas(recompensas_evento: dict):
+def aplicar_recompensas(recompensas_evento: dict, stock: dict):
     for nombre, cantidad in recompensas_evento.items():
-        if nombre not in recursos:
-            recursos[nombre] = {'cantidad': 0}
-        recursos[nombre]['cantidad'] += cantidad
+        stock[nombre] = stock.get(nombre, 0) + cantidad
         
 # ===========================================
 #         NUMERADORES DE RECURSOS

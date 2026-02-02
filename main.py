@@ -17,7 +17,8 @@ def crear_estado_inical():
         'eventos_activos': {},
         'eventos_historial': {},
         'siguiente_id': 1,
-        'reloj': {'dia': 1, 'hora': 8}
+        'reloj': {'dia': 1, 'hora': 8},
+        'stock': {}
     }
 
 estado = persistencia.cargar_estado()
@@ -43,13 +44,13 @@ def mostrar_menu(estado: dict):
         print('3. Consultar eventos activos')
         print('4. Pasar al día siguiente / Avanzar tiempo')
         print('5. Guardar progreso (Ir a la posada)')
-        print('6. Salir del gremio')
+        print('6. Mostrar el stock/inventario')
+        print('7. Salir del gremio')
         print('='*45)
         
-        opcion = input('Selecciona una opción (1-6): ')
+        opcion = input('Selecciona una opción (1-7): ')
 
         if opcion == '1':
-            #TODO
             recursos.mostrar_recursos_disponibles()
 
         elif opcion == '2':
@@ -60,11 +61,15 @@ def mostrar_menu(estado: dict):
 
         elif opcion == '4':
             avanzar_tiempo_gremio()
+
         elif opcion == '5':
             persistencia.guardar_estado(estado)
             print('\nHas descansado en la posada. Progreso guardado.')
-
+        
         elif opcion == '6':
+            mostrar_stock(estado['stock'])
+
+        elif opcion == '7':
             ejecutando = confirmar_salida(estado)
 
         else:
@@ -173,16 +178,21 @@ def avanzar_tiempo_gremio():
 
     horas = int(input('\nCuantas horas deseas avanzar?: '))
 
-    finalizados = eventos.avanzar_tiempo(
-        horas,
-        estado['reloj'],
-        estado['eventos_activos'],
-        estado['eventos_historial'],
-    )
+    finalizados = eventos.avanzar_tiempo(horas, estado)
     if finalizados:
         print(f'Se finalizaron {len(finalizados)} expediciones')
     else:
         print('No termino ninguna expedicion')
+
+def mostrar_stock(stock: dict):
+    print('\n=== STOCK ===')
+    if not stock:
+        print('El stock esta vacio')
+        return
+    
+    for nombre, cantidad in stock.items():
+        print(f'- {nombre}: x{cantidad}')
+
 # ===========================================
 #            PUNTO DE ENTRADA
 # ===========================================
