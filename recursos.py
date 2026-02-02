@@ -6,6 +6,10 @@
 # Este modulo contiene la base de datos de recursos del gremio:
 # aventureros, armas y mazmorras disponibles.
 
+# ===========================================
+#           TABLA DE RECURSOS
+# ===========================================
+
 recursos = {
     'aventureros': 
     {
@@ -179,6 +183,9 @@ def obtener_mazmorras_disponibles():
 def obtener_duracion_mazmorra(mazmorra: str) -> int:
     return recursos['mazmorras'][mazmorra]['duracion_horas']
 
+def obtener_dificultad_mazmorra(mazmorra) -> str:
+    return recursos['mazmorras'][mazmorra]['dificultad']
+
 def obtener_todas_las_mazmorras():
     return recursos['mazmorras']
 
@@ -267,7 +274,7 @@ def liberar_recurso(tipo: str, nombre: str, cantidad: int):
         return False, 'Tipo de recurso invalido'
     if nombre not in recursos[tipo]:
         return False, 'Recurso no existe'
-    if recursos[tipo][nombre]['cantidad'] + cantidad > recursos[tipo][nombre]['cantidad_total']:
+    if recursos[tipo][nombre]['cantidad'] + cantidad > recursos[tipo][nombre]['cantidad_max']:
         return False, 'No se pueden liberar mas recursos de los existentes'
     recursos[tipo][nombre]['cantidad'] += cantidad
     return True, 'Recurso liberado correctamente'
@@ -299,6 +306,12 @@ def liberar_mazmorra(mazmorra: str):
 
     return True, 'Mazmorra liberada correctamente'
 
+def aplicar_recompensas(recompensas_evento: dict):
+    for nombre, cantidad in recompensas_evento.items():
+        if nombre not in recursos:
+            recursos[nombre] = {'cantidad': 0}
+        recursos[nombre]['cantidad'] += cantidad
+        
 # ===========================================
 #         NUMERADORES DE RECURSOS
 # ===========================================

@@ -9,6 +9,7 @@
 # IMPORTACIONES
 import recursos
 import validacion
+import recompensas
 
 # ===========================================
 #           FUNCIONES DE GESTION 
@@ -49,11 +50,15 @@ def crear_evento(
     inicio_hora = reloj['dia'] * 24 + reloj['hora']
     fin_hora = inicio_hora + duracion_horas
 
+    # OBTENER LA DIFICULTAD
+    dificultad = recursos.obtener_dificultad_mazmorra(mazmorra)
+
     # CREAR EVENTO
     id_evento = siguiente_id
     evento = {
         'id': id_evento,
         'mazmorra': mazmorra,
+        'dificultad': dificultad,
         'recursos_usados': recursos_usados,
         'inicio': inicio_hora,
         'fin': fin_hora,
@@ -82,8 +87,17 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
         for nombre, cantidad in aventurero_o_arma.items():
             recursos.liberar_recurso(tipo, nombre, cantidad)
     
-    # FINALIZACION DE EVENTO
+    # RECOMPENSAS
+    recompensas_evento = recompensas.generar_recompensas(evento['dificultad'])
+    recursos.aplicar_recompensas(recompensas_evento)
 
+    print('\nRecompensas obtenidas:')
+    for nombre, cant in recompensas_evento.items():
+        print(f'- {nombre} x{cant}')
+
+    input('\nPulsa enter para continuar...')
+
+    # FINALIZACION DE EVENTO
     evento['estado'] = 'finalizado'
     eventos_historial[id_evento] = evento
 

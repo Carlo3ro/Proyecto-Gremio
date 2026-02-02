@@ -115,10 +115,43 @@
         }
     },
     "eventos_activos": {},
-    "eventos_historial": {},
-    "siguiente_id": 1,
+    "eventos_historial": {
+        "1": {
+            "id": 1,
+            "mazmorra": "Cueva del Eco",
+            "recursos_usados": {
+                "aventureros": {
+                    "mago": 1
+                },
+                "armas": {
+                    "Baculo Magico": 1
+                }
+            },
+            "inicio": 35,
+            "fin": 39,
+            "tiempo_restante": 4,
+            "estado": "finalizado"
+        },
+        "2": {
+            "id": 2,
+            "mazmorra": "Torre de Cristal",
+            "recursos_usados": {
+                "aventureros": {
+                    "picaro": 1
+                },
+                "armas": {
+                    "Dagas Dobles": 1
+                }
+            },
+            "inicio": 41,
+            "fin": 51,
+            "tiempo_restante": 10,
+            "estado": "finalizado"
+        }
+    },
+    "siguiente_id": 3,
     "reloj": {
-        "dia": 1,
-        "hora": 11
+        "dia": 2,
+        "hora": 4
     }
 }

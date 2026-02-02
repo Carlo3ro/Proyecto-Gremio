@@ -7,7 +7,7 @@
 # para comenzar una expedicion
 
 # ===========================================
-#          FUNCIONES DE GESTION 
+#         FUNCIONES DE VALIDACION
 # ===========================================
 
 def validar_codependencia(recursos_usados: dict):
@@ -79,3 +79,21 @@ def validar_compatibilidad_aventurero_arma(recursos_usados: dict):
             return False, f'El arma {arma} no es compatible con los aventureros seleccionados'
 
     return True, 'Compatibilidad aventurero-arma válida'
+
+def validar_min_aventureros(dificultad: str, aventureros_evento: dict):
+    requisitos_aventureros = {
+        'C': 2,
+        'B': 3,
+        'A': 4,
+    }
+
+    if dificultad not in requisitos_aventureros:
+        return True, None 
+    
+    minimo = requisitos_aventureros[dificultad]
+    cantidad = len(aventureros_evento)
+
+    if cantidad < minimo:
+        return False, f'La mazmorra de dificultad {dificultad} requiere al menos {minimo} aventureros'
+    
+    return True, None
