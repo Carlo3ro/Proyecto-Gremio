@@ -18,7 +18,18 @@ def crear_estado_inical():
         'eventos_historial': {},
         'siguiente_id': 1,
         'reloj': {'dia': 1, 'hora': 8},
-        'stock': {}
+        'stock': {},
+        'estadisticas': {
+            'expediciones_totales': 0,
+            'expediciones_existosas': 0,
+            'expediciones_fallidas': 0,
+            'horas_transcurridas': 0,
+            'recompensas_totales': 0,
+            'items_raros_total': 0,
+            'items_raros_obtenidos': [],
+            'expediciones_noche_profunda': 0,
+            'mazmorras_S_completadas': 0
+        }
     }
 
 estado = persistencia.cargar_estado()
@@ -44,11 +55,12 @@ def mostrar_menu(estado: dict):
         print('3. Consultar eventos activos')
         print('4. Pasar al día siguiente / Avanzar tiempo')
         print('5. Guardar progreso (Ir a la posada)')
-        print('6. Mostrar el stock/inventario')
-        print('7. Salir del gremio')
+        print('6. Ver el stock/inventario')
+        print('7. Ver el historial de items raros')
+        print('8. Salir del gremio')
         print('='*45)
         
-        opcion = input('Selecciona una opción (1-7): ')
+        opcion = input('Selecciona una opción (1-8): ')
 
         if opcion == '1':
             recursos.mostrar_recursos_disponibles(estado['reloj'])
@@ -70,6 +82,9 @@ def mostrar_menu(estado: dict):
             mostrar_stock(estado['stock'])
 
         elif opcion == '7':
+            mostrar_historial_items_raros(estado)
+
+        elif opcion == '8':
             ejecutando = confirmar_salida(estado)
 
         else:
@@ -193,6 +208,24 @@ def mostrar_stock(stock: dict):
     
     for nombre, cantidad in stock.items():
         print(f'- {nombre}: x{cantidad}')
+
+def mostrar_historial_items_raros(estado):
+    historial =  estado['estadisticas']['items_raros_obtenidos']
+
+    print('\n=== HISTORIAL DE ITEMS RAROS ===\n')
+
+    if not historial:
+        print('Aun no has obtenido items raros')
+        input('\nPresiona ENTER para volver...')
+        return
+    
+    for idx, h in enumerate(historial, start=1):
+        print(
+            f'{idx}. Dia {h['dia']} - {h['hora']}:00 |'
+            f' Mazmorra: {h['mazmorra']}'
+            f' (Dificultad {h['dificultad']})'
+        )
+    input('\nPresiona ENTER para continuar')
 
 # ===========================================
 #            PUNTO DE ENTRADA
