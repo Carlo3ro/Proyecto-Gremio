@@ -139,7 +139,12 @@ recursos = {
             'dificultad': 'S',
             'duracion_horas': 8,
             'nocturna': True,
-            'recompensas_mejoradas': True,
+            'bonus_rareza': 2.0,
+            'recompensas': {
+                'oro': (30, 60),
+                'gema_rara': (0, 1),
+                'reliquia antigua': (0, 1)
+            },
             'descripcion': 'Una grieta sin fondo que solo se abre bajo la luz de la luna'
         }
     }

@@ -6,10 +6,14 @@
 import random
 
 # ===========================================
-#          TABLAS DE RECOMPENSAS
+#     TABLAS DE RECOMPENSAS / ITEMS RAROS
 # ===========================================
 
-# nombre, cantidad, probabilidad
+items_raros = {
+    'Artefacto antiguo',
+    'Pergamino raro',
+    'Runa mágica',
+}
 
 recompensas_por_dificultad = {
     'F': {
@@ -59,7 +63,7 @@ recompensas_por_dificultad = {
 #          FUNCIONES DE GENERACION
 # ===========================================
 
-def generar_recompensas(dificultad: str) -> dict:
+def generar_recompensas(dificultad: str, bonus_rareza: float = 1.0) -> dict:
 
     recompensas = {}
 
@@ -72,9 +76,14 @@ def generar_recompensas(dificultad: str) -> dict:
     oro_min, oro_max = data['oro']
     recompensas['Oro'] = random.randint(oro_min, oro_max)
 
-    # Objetos aleatorios
+    # Objetos aleatorios (con bonus)
     for nombre, prob in data['objetos']:
-        if random.random() <= prob:
+        prob_final = min(prob * bonus_rareza, 1.0)
+
+        if random.random() <= prob_final:
             recompensas[nombre] = recompensas.get(nombre, 0) + 1
 
     return recompensas
+
+def obtener_items_raros(recompensas: dict):
+    return [item for item in recompensas if item in items_raros]

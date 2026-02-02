@@ -9,7 +9,8 @@
 # IMPORTACIONES
 import recursos
 import validacion
-import recompensas
+from recompensas import obtener_items_raros
+from recompensas import generar_recompensas
 
 # ===========================================
 #           FUNCIONES DE EVENTOS
@@ -88,14 +89,36 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
             recursos.liberar_recurso(tipo, nombre, cantidad)
     
     # RECOMPENSAS
-    recompensas_evento = recompensas.generar_recompensas(evento['dificultad'])
+    if evento.get('nocturna', False):
+        bonus = 2.0
+    else:
+        bonus = 1.0
+
+    recompensas_evento = generar_recompensas(evento['dificultad'], bonus)
     recursos.aplicar_recompensas(recompensas_evento, stock)
 
     print('\nRecompensas obtenidas:')
     for nombre, cant in recompensas_evento.items():
         print(f'- {nombre} x{cant}')
 
-    input('\nPulsa enter para continuar...')
+    items_raros = obtener_items_raros(recompensas_evento)
+
+    if items_raros:
+        if evento.get('nocturna', False):
+            print('LA NOCHE RESPONDE A TU LLAMADO...\n')
+            input('Presiona ENTER para continuar\n')
+            print('TE SIENTES ANSIOSO POR SABER QUE VA A PASAR...\n')
+            input('Presiona ENTER para continuar\n')
+            print('Has obtenido un botin exepcional\n')
+        else:    
+            print('\n VES ALGO BRILLAR EN LA DISTANCIA...\n')
+            input('Presiona ENTER para continuar\n')
+            print('TE ACERCAS A VERLO Y LO TOMAS...\n')
+            input('Presiona ENTER para continuar\n')
+            print('Has obtenido un botin exepecional:\n')
+            for item in items_raros:
+                print(f'{item}')
+            input('\nPulsa enter para continuar...')
 
     # FINALIZACION DE EVENTO
     evento['estado'] = 'finalizado'
