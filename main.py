@@ -51,7 +51,7 @@ def mostrar_menu(estado: dict):
         opcion = input('Selecciona una opción (1-7): ')
 
         if opcion == '1':
-            recursos.mostrar_recursos_disponibles()
+            recursos.mostrar_recursos_disponibles(estado['reloj'])
 
         elif opcion == '2':
             planificar_expedicion()
@@ -117,7 +117,7 @@ def planificar_expedicion():
     print('\n=== PLANIFICAR EXPEDICIÓN ===')
 
     # MAZMORRA
-    mazmorra, error = recursos.seleccionar_mazmorra()
+    mazmorra, error = recursos.seleccionar_mazmorra(estado['reloj'])
     if error:
         print(error)
         return
@@ -129,6 +129,7 @@ def planificar_expedicion():
     aventureros = recursos.seleccionar_aventureros()
     if not aventureros:
         print('No se seleccionaron aventureros')
+
     # ARMAS
     print('\nCada aventurero debe tener un arma compatible')
     armas = recursos.seleccionar_armas()

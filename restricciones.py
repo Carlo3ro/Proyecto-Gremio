@@ -85,6 +85,7 @@ def validar_min_aventureros(dificultad: str, aventureros_evento: dict):
         'C': 2,
         'B': 3,
         'A': 4,
+        'S': 5
     }
 
     if dificultad not in requisitos_aventureros:

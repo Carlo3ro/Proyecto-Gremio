@@ -12,7 +12,7 @@ import validacion
 import recompensas
 
 # ===========================================
-#           FUNCIONES DE GESTION 
+#           FUNCIONES DE EVENTOS
 # ===========================================
 
 def crear_evento(
@@ -103,45 +103,85 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
 
     return True, f'Evento {id_evento} finalizado correctamente'
 
+# ===========================================
+#            GESTION DE TIEMPO
+# ===========================================
+
 def avanzar_tiempo(horas: int, estado: dict):
-    '''
-    Restar tiempo a los eventos activos, detecta eventos terminados
-    y los finaliza automaticamente
-    '''
-    eventos_activos = estado['eventos_activos'] 
+
+    eventos_activos = estado['eventos_activos']
     eventos_historial = estado['eventos_historial']
     stock = estado['stock']
     reloj = estado['reloj']
-    
+
     if horas <= 0:
         return []
-    
-    # AVANZAR TIEMPO
-    reloj['hora'] += horas
-
-    while reloj['hora'] >= 24:
-        reloj['hora'] -= 24
-        reloj['dia'] += 1
-
-    tiempo_actual = reloj['dia'] * 24 + reloj['hora']
 
     eventos_finalizados = []
 
-    # DETECTAR EVENTOS TERMINADOS
+    for _ in range(horas):
+        continuar = avanzar_una_hora(reloj)
 
-    for id_evento, evento in list(eventos_activos.items()):
-        if evento['fin'] <= tiempo_actual:
-            finalizar_evento(
-                id_evento,
-                eventos_activos,
-                eventos_historial,
-                stock 
-            )
-            eventos_finalizados.append(id_evento)
-    
+        if not continuar:
+            break
+
+        tiempo_actual = reloj['dia'] * 24 + reloj['hora']
+
+        for id_evento, evento in list(eventos_activos.items()):
+            if evento['fin'] <= tiempo_actual:
+                finalizar_evento(
+                    id_evento,
+                    eventos_activos,
+                    eventos_historial,
+                    stock
+                )
+                eventos_finalizados.append(id_evento)
 
     return eventos_finalizados
     
+def es_noche(hora: int) -> bool:
+    # Noche de 18 a 6
+    return hora >= 18 or hora < 6
+
+def es_noche_profunda(hora: int) -> bool:
+    # Noche profunda de 20 a 4
+    return hora >= 20 or hora < 4
+
+def avanzar_una_hora(reloj: dict) -> bool:
+    '''
+    Avanza el reloj una hora
+    Devuelve False si el jugador decide obtener la espera
+    ''' 
+    hora_anterior = reloj['hora']
+    era_noche = es_noche(hora_anterior)
+    era_noche_profunda = es_noche_profunda(hora_anterior)
+
+    reloj['hora'] += 1
+
+    if reloj['hora'] >= 24:
+        reloj['hora'] = 0
+        reloj['dia'] += 1
+
+    # CAE LA NOCHE
+    if not era_noche and es_noche(reloj['hora']):
+        print('\nLa noche cae sobre el gremio')
+        print('Las sombras se alargan y el ambiente se vuelve mas denso')
+        input('Pulsa ENTER para continuar...')
+
+    # NOCHE PROFUNDA
+    if not era_noche_profunda and es_noche_profunda(reloj['hora']):
+        print('\nSientes nuevas presencias emerger de la oscuridad...')
+        print('Una mazmorra especial ha aparecido')
+        opcion = input('Deseas dejar de esperar para investigarlo? (s/n)').strip().lower()
+        if opcion == 's':
+            return False
+
+    # AMANECE  
+    if reloj['hora'] == 6:
+        print('\nEl sol vuelve a alzarse, un nuevo dia comienza')
+        input('Presiona ENTER para continuar')
+    
+    return True
 # ===========================================
 #           FUNCIONES DE LISTADO
 # ===========================================

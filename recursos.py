@@ -15,7 +15,7 @@ recursos = {
     {
         'guerrero': 
             {
-                'cantidad': 0,
+                'cantidad': 3,
                 'cantidad_max': 3,
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
@@ -54,7 +54,7 @@ recursos = {
     {
         'Espada Larga': 
         {
-            'cantidad': 0,
+            'cantidad': 4,
             'cantidad_max': 4,
             'descripcion': 'Armas versátiles para los guerreros.',
             'tipo': 'Guerrero'
@@ -132,69 +132,18 @@ recursos = {
             'dificultad': 'A',
             'duracion_horas': 12,
             'descripcion': 'Santuario elevado con guardianes ancestrales.'
+        },
+        'Abismo Nocturno':
+        {
+            'disponible': True,
+            'dificultad': 'S',
+            'duracion_horas': 8,
+            'nocturna': True,
+            'recompensas_mejoradas': True,
+            'descripcion': 'Una grieta sin fondo que solo se abre bajo la luz de la luna'
         }
     }
 }
-
-# ===========================================
-#      FUNCIONES DE OBTENER RECURSOS 
-# ===========================================
-
-def obtener_aventureros_disponibles():
-    disponibles = {}
-
-    for nombre, info in recursos['aventureros'].items():
-        if info['cantidad'] > 0:
-            disponibles[nombre] = {
-                'cantidad': info['cantidad'],
-                'armas': info['arma_predilecta'],
-                'descripcion': info['descripcion']
-            }
-
-    return disponibles
-
-def obtener_armas_disponibles():
-    disponibles = {}
-
-    for nombre, info in recursos['armas'].items():
-        if info['cantidad'] > 0:
-            disponibles[nombre] = {
-                'cantidad': info['cantidad'],
-                'aventurero': info['tipo'],
-                'descripcion': info['descripcion']
-            }
-
-    return disponibles
-
-def obtener_mazmorras_disponibles():
-    disponibles = {}
-
-    for nombre, info in recursos['mazmorras'].items():
-        if info['disponible']:
-            disponibles[nombre] = {
-                'disponible': info['disponible'],
-                'dificultad': info['dificultad'],
-                'duracion_horas': info['duracion_horas'],
-                'descripcion': info['descripcion']
-            }
-
-    return disponibles
-
-def obtener_duracion_mazmorra(mazmorra: str) -> int:
-    return recursos['mazmorras'][mazmorra]['duracion_horas']
-
-def obtener_dificultad_mazmorra(mazmorra) -> str:
-    return recursos['mazmorras'][mazmorra]['dificultad']
-
-def obtener_todas_las_mazmorras():
-    return recursos['mazmorras']
-
-def obtener_recursos_disponibles():
-    return {
-        'aventureros': obtener_aventureros_disponibles(),
-        'armas': obtener_armas_disponibles(),
-        'mazmorras': obtener_mazmorras_disponibles()
-    }
 
 # ===========================================
 #        FUNCIONES DE MOSTAR RECURSOS
@@ -228,24 +177,26 @@ def mostrar_armas():
             print(f'''- {nombre} | Cantidad: {datos['cantidad']}
 {datos['descripcion']}\n''')
 
-def mostrar_mazmorras():
-    print('\n=== MAZMORRAS DISPONIBLES ===\n')
+def mostrar_mazmorras(reloj: dict):
 
-    if not recursos['mazmorras']:
-        print('No hay mazmorras registradas')
+    mazmorras = obtener_mazmorras_disponibles(reloj)
+    
+    if not mazmorras:
+        print('No hay mazmorras disponibles en este momento')
         return
     
-    for nombre, datos in recursos['mazmorras'].items():
-        if not datos['disponible']:
-            print(f'- {nombre}: Ocupada\n')
+    print('\n=== MAZMORRAS DISPONIBLES ===')
+    for nombre, info in mazmorras.items():
+        if info['disponible'] == False:
+            print(f'-{nombre} no esta disponible')
         else:
-            print(f'''- {nombre} | Duracion: {datos['duracion_horas']}
-Descripcion: {datos['descripcion']}\n''')
-        
-def mostrar_recursos_disponibles():
+            print(f'''-{nombre} | Dificultad: {info['dificultad']}
+{info['descripcion']}\n''')
+
+def mostrar_recursos_disponibles(reloj: dict):
     mostrar_aventureros()
     mostrar_armas()
-    mostrar_mazmorras()
+    mostrar_mazmorras(reloj)
 
 # ===========================================
 #          FUNCIONES DE GESTION 
@@ -314,34 +265,30 @@ def aplicar_recompensas(recompensas_evento: dict, stock: dict):
 #         NUMERADORES DE RECURSOS
 # ===========================================
 
-#TODO
-
-def seleccionar_mazmorra():
-    mazmorras_disponibles = {
-        nombre: datos
-        for nombre, datos in recursos['mazmorras'].items()
-        if datos.get('disponible', False)
-    }
+def seleccionar_mazmorra(reloj: dict):
+    mazmorras_disponibles = obtener_mazmorras_disponibles(reloj)
 
     if not mazmorras_disponibles:
-        print('No hay mazmorras disponibles.')
-        return None, 'Sin mazmorras'
+        return None, 'No hay mazmorras disponibles en este momento'
 
     nombres = list(mazmorras_disponibles.keys())
 
     print('\n=== MAZMORRAS DISPONIBLES ===')
     for i, nombre in enumerate(nombres, start=1):
-        print(f'{i}. {nombre}')
+        dificultad = mazmorras_disponibles[nombre]['dificultad']
+        print(f'{i}. {nombre} (Dificultad {dificultad})')
 
-    try:
-        opcion = int(input('Selecciona una mazmorra: '))
-        if opcion < 1 or opcion > len(nombres):
-            return None, 'Opción inválida'
-    except ValueError:
+    opcion = input('Selecciona una mazmorra: ').strip()
+
+    if not opcion.isdigit():
         return None, 'Entrada inválida'
 
-    mazmorra_elegida = nombres[opcion - 1]
-    return mazmorra_elegida, None
+    idx = int(opcion) - 1
+
+    if idx < 0 or idx >= len(nombres):
+        return None, 'Opción fuera de rango'
+
+    return nombres[idx], None
 
 def seleccionar_aventureros() -> dict:
 
@@ -425,3 +372,63 @@ def seleccionar_armas() -> dict:
         seleccionados[nombre] = 1
 
     return seleccionados
+
+# ===========================================
+#      FUNCIONES DE OBTENER RECURSOS 
+# ===========================================
+
+def obtener_aventureros_disponibles():
+    disponibles = {}
+
+    for nombre, info in recursos['aventureros'].items():
+        if info['cantidad'] > 0:
+            disponibles[nombre] = {
+                'cantidad': info['cantidad'],
+                'armas': info['arma_predilecta'],
+                'descripcion': info['descripcion']
+            }
+
+    return disponibles
+
+def obtener_armas_disponibles():
+    disponibles = {}
+
+    for nombre, info in recursos['armas'].items():
+        if info['cantidad'] > 0:
+            disponibles[nombre] = {
+                'cantidad': info['cantidad'],
+                'aventurero': info['tipo'],
+                'descripcion': info['descripcion']
+            }
+
+    return disponibles
+
+def obtener_mazmorras_disponibles(reloj: dict) -> dict:
+    disponibles = {}
+
+    hora = reloj['hora']
+
+    for nombre, info in recursos['mazmorras'].items():
+        if info.get('nocturna'):
+            hora = reloj['hora']
+            if not hora >= 20 or hora <= 4:
+                continue
+        disponibles[nombre] = info
+
+    return disponibles
+
+def obtener_duracion_mazmorra(mazmorra: str) -> int:
+    return recursos['mazmorras'][mazmorra]['duracion_horas']
+
+def obtener_dificultad_mazmorra(mazmorra) -> str:
+    return recursos['mazmorras'][mazmorra]['dificultad']
+
+def obtener_todas_las_mazmorras():
+    return recursos['mazmorras']
+
+def obtener_recursos_disponibles():
+    return {
+        'aventureros': obtener_aventureros_disponibles(),
+        'armas': obtener_armas_disponibles(),
+        'mazmorras': obtener_mazmorras_disponibles()
+    }
