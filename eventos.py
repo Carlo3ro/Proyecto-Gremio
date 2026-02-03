@@ -128,7 +128,9 @@ def finalizar_evento(
 
     if not exito:
         print('\nLa expedicion ha fracasado...')
+        time.sleep(1.5)
         print('Los aventureros regresan heridos y sin botin.')
+        time.sleep(1.5)
 
         estado['estadisticas']['expediciones_fallidas'] += 1
 
@@ -150,7 +152,7 @@ def finalizar_evento(
 
         items_raros = obtener_items_raros(recompensas_evento)
 
-        print('\nExpedicion exitosa')
+        print('\nExpedicion exitosa 🏆')
         print('\nRecompensas obtenidas:')
         for nombre, cant in recompensas_evento.items():
             if nombre not in items_raros:
@@ -172,9 +174,9 @@ def finalizar_evento(
 
             print('...')
             time.sleep(2)
-            print('\nVES ALGO BRILLAR EN LA DISTANCIA...\n')
+            print('\n💎 Algo resplandece entre los restos...\n')
             time.sleep(2)
-            print('TE ACERCAS A VERLO\ns')
+            print('Te aproximas lentamente\n')
             time.sleep(1.5)
             print('\n???')
             time.sleep(1.5)
@@ -257,7 +259,7 @@ def avanzar_una_hora(reloj: dict) -> bool:
 
     # CAE LA NOCHE
     if not era_noche and es_noche(reloj['hora']):
-        print('\nLa noche cae sobre el gremio')
+        print('\nLa noche cae sobre el gremio 🌙')
         time.sleep(1.5)
         print('Las sombras se alargan y el ambiente se vuelve mas denso\n')
         time.sleep(1.5)
@@ -269,7 +271,7 @@ def avanzar_una_hora(reloj: dict) -> bool:
     if not era_noche_profunda and es_noche_profunda(reloj['hora']):
         print('\nSientes nuevas presencias emerger de la oscuridad...')
         time.sleep(1.5)
-        print('Una mazmorra especial ha aparecido\n')
+        print('Una mazmorra especial ha aparecido 💀\n')
         time.sleep(1.5)
 
         while True:
@@ -287,7 +289,7 @@ def avanzar_una_hora(reloj: dict) -> bool:
     # AMANECE  
     if reloj['hora'] == 6:
         limpiar_pantalla()
-        print('\nEl sol vuelve a alzarse, un nuevo dia comienza')
+        print('\nEl sol vuelve a alzarse, un nuevo dia comienza ☀️')
         input('\nPresiona ENTER para continuar\n')
         limpiar_pantalla()
     return True
@@ -432,7 +434,7 @@ def mostrar_panel_expedicion(mazmorra, aventureros, armas):
             data_aventurero = recursos.recursos['aventureros'][nombre]
             compatibles = data_aventurero['arma_predilecta']
             poder = recursos.recursos['aventureros'][nombre]['poder']
-            print(f'⚔️  {nombre.title()} (+{poder}):')
+            print(f'{nombre.title()} (+{poder}):')
             print(f'    ({", ".join(compatibles)})')
 
     print()
@@ -489,7 +491,7 @@ def generar_barra_progreso(evento, reloj):
     bloques_totales = 10
     bloques_llenos = int(progreso * bloques_totales)
 
-    barra = '█' * bloques_llenos + '░' * (bloques_totales - bloques_llenos)
+    barra = '■' * bloques_llenos + '□' * (bloques_totales - bloques_llenos)
 
     porcentaje = int(progreso * 100)
 
@@ -497,3 +499,11 @@ def generar_barra_progreso(evento, reloj):
 
 def limpiar_pantalla():
     print('\n'*40)
+
+def icono_hora(hora:int) -> str:
+    if es_noche_profunda(hora):
+        return '🌑'
+    elif es_noche(hora):
+        return '🌙' 
+    else:
+        return '☀️'

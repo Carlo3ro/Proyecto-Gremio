@@ -6,7 +6,9 @@
 import recursos
 import eventos
 import persistencia
+import time
 from eventos import limpiar_pantalla as lp
+from eventos import icono_hora
 
 # ===========================================
 #         INICIALIZACION DEL ESTADO
@@ -14,6 +16,9 @@ from eventos import limpiar_pantalla as lp
 
 def crear_estado_inical():
     return {
+        'jugador':{
+            'nombre': None
+        },
         'recursos': recursos.recursos,
         'eventos_activos': {},
         'eventos_historial': {},
@@ -34,9 +39,54 @@ def crear_estado_inical():
     }
 
 estado = persistencia.cargar_estado()
-if estado is None:
+
+es_partida_nueva = estado is None
+
+if es_partida_nueva:
     estado = crear_estado_inical()
 
+# ===========================================
+#               BIENVENIDA
+# ===========================================
+
+def bienvenida(estado, es_partida_nueva):
+
+    lp()
+
+    nombre = estado['jugador']['nombre']
+
+    print('='*40)
+    print('        GREMIO DE AVENTUREROS')
+    print('='*40)
+
+    if es_partida_nueva:
+
+        print('Humano...')
+        time.sleep(1.5)
+        nombre = input('\n Cuál es tu nombre? ').strip()
+        time.sleep(1.5)
+
+        if not nombre:
+            nombre = 'Aventurero'
+
+        estado['jugador']['nombre'] = nombre
+
+        print(f'\nBienvenido al gremio, {nombre}.')
+        time.sleep(1.5)
+        print('Grandes riquezas — o una tumba gloriosa — te esperan.')
+        time.sleep(1.5)
+
+    else:
+
+        print(f'\nEl gremio sigue en pie ⚔️, {nombre}.')
+        time.sleep(1.5)
+        print('Nuevas expediciones aguardan tu mando.')
+        time.sleep(1.5)
+
+    input('\nPulsa ENTER para continuar...')
+    time.sleep(1.5)
+
+bienvenida(estado, es_partida_nueva)
 # ===========================================
 #            FUNCIÓN PRINCIPAL
 # ===========================================
@@ -45,12 +95,16 @@ def mostrar_menu(estado: dict):
     '''
     Muestra el menú principal del gremio y gestiona la selección del usuario.
     '''
-    
     lp()
     ejecutando = True
 
     while ejecutando:
-        print(f'=== Dia {estado['reloj']['dia']} - hora {estado['reloj']['hora']:02d}:00 ===\n')
+
+        reloj = estado['reloj']
+        nombre = estado['jugador']['nombre']
+        icono1 = icono_hora(estado['reloj']['hora'])
+
+        print(f'🛡️  {nombre} | Día {reloj["dia"]} — {reloj["hora"]:02d}:00 {icono1}\n')
         print('='*44)
         print('GREMIO DE AVENTUREROS - MENÚ PRINCIPAL')
         print('='*44)
@@ -108,7 +162,7 @@ def confirmar_salida (estado: dict) -> bool:
     if opcion == '1':
         lp()
         persistencia.guardar_estado(estado)
-        print('\nProgreso guardado. Hasta la Proxima!')
+        print('\nProgreso guardado. Hasta la Proxima :3!')
         return False
     
     elif opcion == '2':
@@ -187,7 +241,9 @@ def planificar_expedicion():
         print(f'\nError: {resultado}')
         return
 
-    print(f'\nExpedición creada con ID {resultado}')
+    print(f'⚔️  La expedición ha sido registrada'
+        f'ID del contrato: {resultado}'
+    )
     input('\nPresiona ENTER para continuar...')
     lp()
     # ACTUALIZAR ESTADO GLOBAL
@@ -221,6 +277,8 @@ def avanzar_tiempo_gremio():
 
     finalizados = eventos.avanzar_tiempo(horas, estado)
 
+    print('El tiempo transcurre...')
+    time.sleep(1.0)
     print(f'Han pasado {horas}h ...')
     mostrar_reloj(estado['reloj'])
     eventos.listar_eventos_activos_reloj(estado['eventos_activos'], estado['reloj'])
@@ -229,12 +287,14 @@ def avanzar_tiempo_gremio():
 
     if eventos_antes == 0:
         lp()
-        print('El tiempo pasa con calma en el gremio...\n')
+        print('🛡️ El gremio está en calma...\n')
+        time.sleep(1.0)
         input('Presiona ENTER para continuar')
         lp()
     elif finalizados:
         lp()
         print(f'Se finalizaron {len(finalizados)} expediciones\n')
+        time.sleep(1.0)
         input('Presiona ENTER para terminar')
         lp()
     
@@ -276,14 +336,14 @@ def mostrar_resumen_estadisticas(estado: dict):
     est = estado['estadisticas']
 
     print('\n--- RESUMEN DEL GREMIO ---')
-    print(f'Expediciones totales     : {est['expediciones_totales']}')
-    print(f'Expediciones exitosas    : {est['expediciones_exitosas']}')
-    print(f'Expediciones fallidas    : {est['expediciones_fallidas']}')
-    print(f'Horas transcurridas      : {est['horas_transcurridas']}')
-    print(f'Recompensas obtenidas    : {est['recompensas_totales']}')
-    print(f'Ítems raros obtenidos    : {est['items_raros_total']}')
-    print(f'Expediciones nocturnas   : {est['expediciones_noche_profunda']}')
-    print(f'Mazmorras S completadas  : {est['mazmorras_S_completadas']}')
+    print(f'⚔️  Expediciones totales     : {est['expediciones_totales']}')
+    print(f'🏆 Expediciones exitosas    : {est['expediciones_exitosas']}')
+    print(f'💀 Expediciones fallidas    : {est['expediciones_fallidas']}')
+    print(f'⏳ Horas transcurridas      : {est['horas_transcurridas']}')
+    print(f'🪙  Recompensas obtenidas    : {est['recompensas_totales']}')
+    print(f'💎 Ítems raros obtenidos    : {est['items_raros_total']}')
+    print(f'🌙 Expediciones nocturnas   : {est['expediciones_noche_profunda']}')
+    print(f'⚰️  Mazmorras S completadas  : {est['mazmorras_S_completadas']}')
 
     input('\nPulsa ENTER para volver...')
     lp()
@@ -292,8 +352,9 @@ def mostrar_reloj(reloj: dict):
     
     dia = reloj['dia']
     hora = reloj['hora']
+    icono = icono_hora(reloj['hora'])
 
-    print(f'=== Dia {dia} - hora {hora:02d}:00 ===')
+    print(f'=== Dia {dia} - hora {hora:02d}:00 {icono} ===')
 
 # ===========================================
 #           FUNCIONES DEl MENU

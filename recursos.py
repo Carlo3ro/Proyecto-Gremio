@@ -15,7 +15,7 @@ from eventos import limpiar_pantalla as lp
 recursos = {
     'aventureros': 
     {
-        'guerrero': 
+        '⚔️  guerrero': 
             {
                 'cantidad': 3,
                 'cantidad_max': 3,
@@ -23,7 +23,7 @@ recursos = {
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
             },
-        'mago': 
+        '🧙  mago': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
@@ -31,7 +31,7 @@ recursos = {
                 'arma_predilecta': ['Baculo Magico', 'Libro de Hechizos'],
                 'descripcion': 'Eruditos del gremio, dominan las artes arcanas y la magia ofensiva.'
             },
-        'sanador': 
+        '✨  sanador': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
@@ -39,7 +39,7 @@ recursos = {
                 'arma_predilecta': ['Baculo Sanador', 'Campana Sagrada'],
                 'descripcion': 'Canalizan la energía divina para curar y proteger a sus aliados.'
             },
-        'arquero': 
+        '🏹  arquero': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
@@ -47,7 +47,7 @@ recursos = {
                 'arma_predilecta': ['Arco de Roble', 'Cuchillo de Caza'],
                 'descripcion': 'Expertos del combate a distancia, veloces y precisos.'
             },
-        'picaro': 
+        '🗡️  picaro': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,

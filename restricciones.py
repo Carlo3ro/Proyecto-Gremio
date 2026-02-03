@@ -19,11 +19,11 @@ def validar_codependencia(recursos_usados: dict):
     armas_evento = recursos_usados['armas']
 
     requisitos = {
-        'guerrero': ['Espada Larga'],
-        'mago': ['Baculo Magico'],
-        'sanador': ['Baculo Sanador'],
-        'arquero': ['Arco de Roble'],
-        'picaro': ['Dagas Dobles']
+        '⚔️  guerrero': ['Espada Larga'],
+        '🧙  mago': ['Baculo Magico'],
+        '✨  sanador': ['Baculo Sanador'],
+        '🏹  arquero': ['Arco de Roble'],
+        '🗡️  picaro': ['Dagas Dobles']
     }
 
     for aventurero, cantidad in aventureros_evento.items():
@@ -59,11 +59,11 @@ def validar_compatibilidad_aventurero_arma(recursos_usados: dict):
     armas_evento = recursos_usados['armas']
 
     compatibilidad = {
-        'guerrero': ['Espada Larga', 'Escudo de Hierro'],
-        'mago': ['Baculo Magico', 'Libro de Hechizos'],
-        'sanador': ['Baculo Sanador', 'Campana Sagrada'],
-        'arquero': ['Arco de Roble', 'Cuchillo de Caza'],
-        'picaro': ['Dagas Dobles', 'Veneno Oculto']
+        '⚔️  guerrero': ['Espada Larga', 'Escudo de Hierro'],
+        '🧙  mago': ['Baculo Magico', 'Libro de Hechizos'],
+        '✨  sanador': ['Baculo Sanador', 'Campana Sagrada'],
+        '🏹  arquero': ['Arco de Roble', 'Cuchillo de Caza'],
+        '🗡️  picaro': ['Dagas Dobles', 'Veneno Oculto']
     }
 
     armas_seleccionadas = set()
