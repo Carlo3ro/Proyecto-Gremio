@@ -10,6 +10,8 @@
 #           TABLA DE RECURSOS
 # ===========================================
 
+from eventos import limpiar_pantalla as lp
+
 recursos = {
     'aventureros': 
     {
@@ -314,6 +316,7 @@ def aplicar_recompensas(recompensas_evento: dict, stock: dict):
 # ===========================================
 
 def seleccionar_mazmorra(reloj: dict):
+
     mazmorras_disponibles = obtener_mazmorras_disponibles(reloj)
 
     if not mazmorras_disponibles:
@@ -321,26 +324,33 @@ def seleccionar_mazmorra(reloj: dict):
 
     nombres = list(mazmorras_disponibles.keys())
 
-    print('\n=== MAZMORRAS DISPONIBLES ===')
-    for idx, nombre in enumerate(nombres, start=1):
-        info = mazmorras_disponibles[nombre]
-        print(
-            f'{idx}. {nombre} '
-            f'(Dificultad {info["dificultad"]}, '
-            f'Duración {info["duracion_horas"]}h)'
-        )
+    while True:
 
-    opcion = input('\nElige una mazmorra: ').strip()
+        print('\n=== MAZMORRAS DISPONIBLES ===')
 
-    if not opcion.isdigit():
-        return None, '\nDebes ingresar un número.'
+        for idx, nombre in enumerate(nombres, start=1):
+            info = mazmorras_disponibles[nombre]
+            print(
+                f'{idx}. {nombre} '
+                f'(Dificultad {info["dificultad"]}, '
+                f'Duración {info["duracion_horas"]}h)'
+            )
 
-    idx = int(opcion) - 1
+        opcion = input('\nElige una mazmorra: ').strip()
 
-    if idx < 0 or idx >= len(nombres):
-        return None, '\nOpción fuera de rango.'
+        if not opcion.isdigit():
+            lp()
+            print('\nDebes ingresar un número.')
+            continue
 
-    return nombres[idx], None
+        idx = int(opcion) - 1
+
+        if idx < 0 or idx >= len(nombres):
+            lp()
+            print('\nOpción fuera de rango.')
+            continue
+
+        return nombres[idx], None
 
 def seleccionar_aventureros() -> dict:
 

@@ -6,6 +6,7 @@
 import recursos
 import eventos
 import persistencia
+from eventos import limpiar_pantalla as lp
 
 # ===========================================
 #         INICIALIZACION DEL ESTADO
@@ -44,6 +45,8 @@ def mostrar_menu(estado: dict):
     '''
     Muestra el menú principal del gremio y gestiona la selección del usuario.
     '''
+    
+    lp()
     ejecutando = True
 
     while ejecutando:
@@ -61,25 +64,32 @@ def mostrar_menu(estado: dict):
         opcion = input('Selecciona una opción (1-6): ')
 
         if opcion == '1':
+            lp()
             menu_expediciones(estado)
 
         elif opcion == '2':
+            lp()
             menu_recursos(estado)
 
         elif opcion == '3':
+            lp()
             menu_estadisticas(estado)
 
         elif opcion == '4':
+            lp()
             avanzar_tiempo_gremio()
 
         elif opcion == '5':
+            lp()
             persistencia.guardar_estado(estado)
             print('\nHas descansado en la posada. Progreso guardado.')
 
         elif opcion == '6':
+            lp()
             ejecutando = confirmar_salida(estado)
 
         else:
+            lp()
             print('\nOpcion no valida. Intenta de nuevo.')
 
 # ===========================================
@@ -95,18 +105,22 @@ def confirmar_salida (estado: dict) -> bool:
     opcion = input('Selecciona una opcion (1-3): ')
 
     if opcion == '1':
+        lp()
         persistencia.guardar_estado(estado)
         print('\nProgreso guardado. Hasta la Proxima!')
         return False
     
     elif opcion == '2':
+        lp()
         print('\nSales del gremio sin guardar')
         return False
     
     elif opcion == '0':
+        lp()
         return True
     
     else:
+        lp()
         print('\nOpcion no valida')
         return True
 
@@ -127,7 +141,7 @@ def planificar_expedicion():
     if error:
         return
 
-    print('\n'*4) 
+    lp()
     eventos.mostrar_panel_expedicion(mazmorra,{},{})
         
     # DURACIÓN
@@ -138,7 +152,7 @@ def planificar_expedicion():
     if not aventureros:
         print('No se seleccionaron aventureros')
 
-    print('\n'*4)
+    lp()
     eventos.mostrar_panel_expedicion(mazmorra,aventureros,{})
 
     # ARMAS
@@ -148,10 +162,8 @@ def planificar_expedicion():
         print('No se seleccionaron armas')
         return
     
-    print('\n'*4)
+    lp()
     eventos.mostrar_panel_expedicion(mazmorra,aventureros,armas)
-
-    input('\nPresiona ENTER para terminar la expedicion')
 
     # RECURSOS
     recursos_usados = {
@@ -170,11 +182,13 @@ def planificar_expedicion():
     )
 
     if not ok:
+        lp()
         print(f'\nError: {resultado}')
         return
 
     print(f'\nExpedición creada con ID {resultado}')
-
+    input('\nPresiona ENTER para continuar...')
+    lp()
     # ACTUALIZAR ESTADO GLOBAL
     estado['siguiente_id'] += 1
 
@@ -199,33 +213,48 @@ def avanzar_tiempo_gremio():
         entrada = input('\nCuantas horas deseas avanzar?: ').strip()
         
         if not entrada.isdigit():
+            lp()
             print('\nOpcion Invalida')
             continue
 
         horas = int(entrada)
 
         if horas <= 0:
+            lp()
             print('\nOpcion Incorrecta')
             continue
         
         break
 
+    lp()
+
     finalizados = eventos.avanzar_tiempo(horas, estado)
 
     if finalizados:
-        print(f'Se finalizaron {len(finalizados)} expediciones')
+        print(f'Se finalizaron {len(finalizados)} expediciones\n')
+        input('Presiona ENTER para volver...')
+        lp()
     else:
-        print('No termino ninguna expedicion')
+        print('No termino ninguna expedicion\n')
+        input('Presiona ENTER para volver...')
+        lp()
+    
+
+
 
 def mostrar_stock(stock: dict):
     print('\n=== STOCK ===')
     if not stock:
         print('\nEl stock esta vacio')
         input('\nPresiona ENTER para continuar...')
+        lp()
         return
     
     for nombre, cantidad in stock.items():
         print(f'- {nombre}: x{cantidad}')
+    
+    input('\nPresiona ENTER para continuar...')
+    lp()
 
 def mostrar_historial_items_raros(estado):
     historial =  estado['estadisticas']['items_raros_obtenidos']
@@ -235,6 +264,7 @@ def mostrar_historial_items_raros(estado):
     if not historial:
         print('Aun no has obtenido items raros')
         input('\nPresiona ENTER para volver...')
+        lp()
         return
     
     for idx, h in enumerate(historial, start=1):
@@ -243,7 +273,8 @@ def mostrar_historial_items_raros(estado):
             f' Mazmorra: {h['mazmorra']}'
             f' (Dificultad {h['dificultad']})'
         )
-    input('\nPresiona ENTER para continuar')
+    input('\nPresiona ENTER para volver...')
+    lp()
 
 def mostrar_resumen_estadisticas(estado: dict):
     est = estado['estadisticas']
@@ -259,6 +290,7 @@ def mostrar_resumen_estadisticas(estado: dict):
     print(f'Mazmorras S completadas  : {est['mazmorras_S_completadas']}')
 
     input('\nPulsa ENTER para volver...')
+    lp()
 
 # ===========================================
 #           FUNCIONES DEl MENU
@@ -275,12 +307,16 @@ def menu_estadisticas(estado: dict):
         opcion = input('\nElige una opcion: ').strip()
 
         if opcion == '1':
+            lp()
             mostrar_resumen_estadisticas(estado)
         elif opcion == '2':
+            lp()
             mostrar_historial_items_raros(estado)
         elif opcion == '0':
+            lp()
             break
         else:
+            lp()
             print('\nOpcion Invalida')
     
 def menu_recursos(estado: dict):
@@ -295,16 +331,22 @@ def menu_recursos(estado: dict):
         opcion = input('\nElige una opción: ').strip()
 
         if opcion == '1':
+            lp()
             recursos.mostrar_aventureros()
         elif opcion == '2':
+            lp()
             recursos.mostrar_armas()
         elif opcion == '3':
+            lp()
             recursos.mostrar_mazmorras(estado['reloj'])
         elif opcion == '4':
+            lp()
             mostrar_stock(estado['stock'])
         elif opcion == '0':
+            lp()
             break
         else:
+            lp()
             print('\nOpción inválida')
 
 def menu_expediciones(estado: dict):
@@ -318,14 +360,19 @@ def menu_expediciones(estado: dict):
         opcion = input('\nElige una opción: ').strip()
 
         if opcion == '1':
+            lp()
             planificar_expedicion()
         elif opcion == '2':
+            lp()
             eventos.listar_eventos_activos(estado['eventos_activos'])
         elif opcion == '3':
+            lp()
             eventos.listar_historial_expediciones(estado)
         elif opcion == '0':
+            lp()
             break
         else:
+            lp()
             print('\nOpción inválida')
 
 # ===========================================

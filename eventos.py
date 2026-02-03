@@ -24,7 +24,7 @@ umbral_dificultad = {
     'C': 54,
     'B': 75,
     'A': 100,
-    'S': 130
+    'S': 120
 }
 
 # ===========================================
@@ -99,6 +99,7 @@ def finalizar_evento(
     evento = eventos_activos.pop(id_evento)
 
     if 'resultado' in evento:
+        limpiar_pantalla()
         return True, 'Evento ya fue resuelto'
 
     # LIBERAR MAZMORRA
@@ -163,9 +164,11 @@ def finalizar_evento(
             )
             estado['estadisticas']['items_raros_total'] += len(items_raros)
 
+            print('\n???')
             print('\nVES ALGO BRILLAR EN LA DISTANCIA...\n')
+            print('TE ACERCAS A VERLO\ns')
             for item in items_raros:
-                print(f'- {item}')
+                print(f'- {item} encontrado')
 
     # FINALIZACION DEL EVENTO
 
@@ -242,21 +245,29 @@ def avanzar_una_hora(reloj: dict) -> bool:
     # CAE LA NOCHE
     if not era_noche and es_noche(reloj['hora']):
         print('\nLa noche cae sobre el gremio')
-        print('Las sombras se alargan y el ambiente se vuelve mas denso')
+        print('Las sombras se alargan y el ambiente se vuelve mas denso\n')
         input('Pulsa ENTER para continuar...')
 
     # NOCHE PROFUNDA
     if not era_noche_profunda and es_noche_profunda(reloj['hora']):
         print('\nSientes nuevas presencias emerger de la oscuridad...')
-        print('Una mazmorra especial ha aparecido')
-        opcion = input('Deseas dejar de esperar para investigarlo? (s/n): ').strip().lower()
+        print('Una mazmorra especial ha aparecido\n')
+
+        while True:
+            opcion = input('Deseas dejar de esperar para investigarlo? (s/n): ').strip().lower()
+            if opcion in ('s', 'n'):
+                break
+            limpiar_pantalla()
+            print('Ingresa solo "s" o "n"')
+            
+
         if opcion == 's':
             return False
 
     # AMANECE  
     if reloj['hora'] == 6:
         print('\nEl sol vuelve a alzarse, un nuevo dia comienza')
-        input('\nPresiona ENTER para continuar')
+        input('\nPresiona ENTER para continuar\n')
     
     return True
 
@@ -310,6 +321,7 @@ def listar_historial_expediciones(estado: dict):
             print('\n  🏆 La expedición tuvo exito.')
 
     input('\nPulsa ENTER para volver...')
+    limpiar_pantalla()
 
 # ===========================================
 #           CALCULOS DE EVENTOS 
@@ -407,4 +419,4 @@ def mostrar_panel_expedicion(mazmorra, aventureros, armas):
     print('='*35)
 
 def limpiar_pantalla():
-    print('\n'*6)
+    print('\n'*40)
