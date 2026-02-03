@@ -7,6 +7,7 @@
 # los eventos (expediciones)
 
 # IMPORTACIONES
+import time
 import random
 import recursos
 import validacion
@@ -169,11 +170,17 @@ def finalizar_evento(
             )
             estado['estadisticas']['items_raros_total'] += len(items_raros)
 
-            print('\n???')
+            print('...')
+            time.sleep(2)
             print('\nVES ALGO BRILLAR EN LA DISTANCIA...\n')
+            time.sleep(2)
             print('TE ACERCAS A VERLO\ns')
+            time.sleep(1.5)
+            print('\n???')
+            time.sleep(1.5)
             for item in items_raros:
                 print(f'- {item} encontrado')
+                time.sleep(0.8)
 
     # FINALIZACION DEL EVENTO
 
@@ -251,17 +258,23 @@ def avanzar_una_hora(reloj: dict) -> bool:
     # CAE LA NOCHE
     if not era_noche and es_noche(reloj['hora']):
         print('\nLa noche cae sobre el gremio')
+        time.sleep(1.5)
         print('Las sombras se alargan y el ambiente se vuelve mas denso\n')
+        time.sleep(1.5)
         input('Pulsa ENTER para continuar...')
+        time.sleep(1.5)
         limpiar_pantalla()
 
     # NOCHE PROFUNDA
     if not era_noche_profunda and es_noche_profunda(reloj['hora']):
         print('\nSientes nuevas presencias emerger de la oscuridad...')
+        time.sleep(1.5)
         print('Una mazmorra especial ha aparecido\n')
+        time.sleep(1.5)
 
         while True:
             opcion = input('Deseas dejar de esperar para investigarlo? (s/n): ').strip().lower()
+            limpiar_pantalla()
             if opcion in ('s', 'n'):
                 break
             limpiar_pantalla()
@@ -296,16 +309,40 @@ def listar_eventos_activos(eventos_activos, reloj):
     for id_evento, evento in eventos_activos.items():
 
         restante = calcular_tiempo_restante(evento, reloj)
-        
+        barra, porcentaje = generar_barra_progreso(evento, reloj)
+
         print(f'''
 Expedicion #{id_evento}
 Mazmorra: {evento['mazmorra']}
 Dificultad: {evento['dificultad']}
 Aventureros: {', '.join(evento['recursos_usados']['aventureros'])}
 Tiempo total: {evento['tiempo_total']} horas
-Tiempo restante: {restante} horas
+{barra} {porcentaje}% - {restante} horas restantes
 ''')
 
+def listar_eventos_activos_reloj(eventos_activos, reloj):
+    '''
+    Mostrar eventos activos
+    '''
+    print('\n---📜 EXPEDICIONES EN CURSO ---')
+    if not eventos_activos:
+        print('No hay eventos activos')
+        return
+
+    for id_evento, evento in eventos_activos.items():
+
+        restante = calcular_tiempo_restante(evento, reloj)
+        barra, porcentaje = generar_barra_progreso(evento, reloj)
+
+        print(f'''
+Expedicion #{id_evento}
+Mazmorra: {evento['mazmorra']}
+Dificultad: {evento['dificultad']}
+Aventureros: {', '.join(evento['recursos_usados']['aventureros'])}
+Tiempo total: {evento['tiempo_total']} horas
+{barra} {porcentaje}% - {restante} horas restantes
+''')
+        
 def listar_historial_expediciones(estado: dict):
     historial = estado['eventos_historial']
 
@@ -435,6 +472,28 @@ def mostrar_panel_expedicion(mazmorra, aventureros, armas):
             print('Riesgo: ALTO 💀')
 
     print('='*35)
+
+def generar_barra_progreso(evento, reloj):
+
+    inicio = evento['inicio']
+    fin = evento['fin']
+
+    tiempo_actual = reloj['dia'] * 24 + reloj['hora']
+
+    duracion_total = fin - inicio
+    transcurrido = tiempo_actual - inicio
+
+    # Clamp profesional (evita negativos o >100%)
+    progreso = max(0, min(1, transcurrido / duracion_total))
+
+    bloques_totales = 10
+    bloques_llenos = int(progreso * bloques_totales)
+
+    barra = '█' * bloques_llenos + '░' * (bloques_totales - bloques_llenos)
+
+    porcentaje = int(progreso * 100)
+
+    return barra, porcentaje
 
 def limpiar_pantalla():
     print('\n'*40)

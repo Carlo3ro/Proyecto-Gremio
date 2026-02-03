@@ -193,19 +193,6 @@ def planificar_expedicion():
     # ACTUALIZAR ESTADO GLOBAL
     estado['siguiente_id'] += 1
 
-def consultar_eventos_activos():
-    evento = eventos.listar_eventos_activos(estado['eventos_activos'])
-    if not evento:
-        print('\nNo hay expediciones activas')
-        return
-    
-    print('\n=== EVENTOS ACTIVOS ===')
-    for i in evento:
-        print(
-            f'ID {i['id']} | Mazmorra: {i['mazmorra']} |'
-            f'Tiempo restante: {i['tiempo restante']}h'
-        )
-
 def avanzar_tiempo_gremio():
 
     print('=== AVANZAR TIEMPO ===')
@@ -236,7 +223,7 @@ def avanzar_tiempo_gremio():
 
     print(f'Han pasado {horas}h ...')
     mostrar_reloj(estado['reloj'])
-    eventos.listar_eventos_activos(estado['eventos_activos'], estado['reloj'])
+    eventos.listar_eventos_activos_reloj(estado['eventos_activos'], estado['reloj'])
     input('Presiona ENTER para continuar')
     lp()
 
@@ -380,7 +367,9 @@ def menu_expediciones(estado: dict):
             planificar_expedicion()
         elif opcion == '2':
             lp()
-            eventos.listar_eventos_activos(estado['eventos_activos'])
+            eventos.listar_eventos_activos(estado['eventos_activos'], estado['reloj'])
+            input('Presiona ENTER para continuar')
+            lp()
         elif opcion == '3':
             lp()
             eventos.listar_historial_expediciones(estado)
