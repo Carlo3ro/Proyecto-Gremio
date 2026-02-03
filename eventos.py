@@ -78,7 +78,8 @@ def crear_evento(
         'recursos_usados': recursos_usados,
         'inicio': inicio_hora,
         'fin': fin_hora,
-        'tiempo_restante': duracion_horas,
+        'tiempo_total': duracion_horas,
+        'tiempo_restante': 0,
         'estado': 'activo'
     }
 
@@ -146,14 +147,18 @@ def finalizar_evento(
         recompensas_evento = generar_recompensas(evento['dificultad'], bonus)
         recursos.aplicar_recompensas(recompensas_evento, stock)
 
+        items_raros = obtener_items_raros(recompensas_evento)
+
+        print('\nExpedicion exitosa')
         print('\nRecompensas obtenidas:')
         for nombre, cant in recompensas_evento.items():
-            print(f'- {nombre} x{cant}')
+            if nombre not in items_raros:
+                print(f'- {nombre} x{cant}')
+        
 
         estado['estadisticas']['recompensas_totales'] += sum(recompensas_evento.values())
 
         # ITEMS RAROS
-        items_raros = obtener_items_raros(recompensas_evento)
 
         if items_raros:
             registrar_items_raros(
@@ -178,6 +183,7 @@ def finalizar_evento(
     eventos_historial[id_evento] = evento
 
     input('\nPulsa ENTER para continuar...')
+    limpiar_pantalla()
     return True, f'Evento {id_evento} finalizado correctamente'
 
 # ===========================================
@@ -247,6 +253,7 @@ def avanzar_una_hora(reloj: dict) -> bool:
         print('\nLa noche cae sobre el gremio')
         print('Las sombras se alargan y el ambiente se vuelve mas denso\n')
         input('Pulsa ENTER para continuar...')
+        limpiar_pantalla()
 
     # NOCHE PROFUNDA
     if not era_noche_profunda and es_noche_profunda(reloj['hora']):
@@ -266,33 +273,37 @@ def avanzar_una_hora(reloj: dict) -> bool:
 
     # AMANECE  
     if reloj['hora'] == 6:
+        limpiar_pantalla()
         print('\nEl sol vuelve a alzarse, un nuevo dia comienza')
         input('\nPresiona ENTER para continuar\n')
-    
+        limpiar_pantalla()
     return True
 
 # ===========================================
 #           FUNCIONES DE LISTADO
 # ===========================================
 
-def listar_eventos_activos(eventos_activos: dict):
+def listar_eventos_activos(eventos_activos, reloj):
     '''
     Mostrar eventos activos
     '''
-
-    print('\n--- EVENTOS ACTIVOS ---')
+    print('\n---📜 EXPEDICIONES EN CURSO ---')
     if not eventos_activos:
         print('No hay eventos activos')
         input('\nPresiona ENTER para continuar...')
         return
 
     for id_evento, evento in eventos_activos.items():
+
+        restante = calcular_tiempo_restante(evento, reloj)
+        
         print(f'''
 Expedicion #{id_evento}
 Mazmorra: {evento['mazmorra']}
 Dificultad: {evento['dificultad']}
-Aventureros: {','.join(evento['recursos_usados']['aventureros'])}
-Tiempo restante: {evento['tiempo_restante']}horas
+Aventureros: {', '.join(evento['recursos_usados']['aventureros'])}
+Tiempo total: {evento['tiempo_total']} horas
+Tiempo restante: {restante} horas
 ''')
 
 def listar_historial_expediciones(estado: dict):
@@ -354,6 +365,13 @@ def resolver_expedicion(poder, dificultad):
     print(f'Poder de la mazmorra: {umbral}')
 
     return poder >= umbral or suerte
+
+def calcular_tiempo_restante(evento, reloj):
+
+    tiempo_actual = reloj['dia'] * 24 + reloj['hora']
+    restante = evento['fin'] - tiempo_actual
+
+    return max(0, restante)
 
 # ===========================================
 #           FUNCIONES DE UI

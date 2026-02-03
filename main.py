@@ -50,16 +50,17 @@ def mostrar_menu(estado: dict):
     ejecutando = True
 
     while ejecutando:
-        print('\n' + '='*45)
+        print(f'=== Dia {estado['reloj']['dia']} - hora {estado['reloj']['hora']:02d}:00 ===\n')
+        print('='*44)
         print('GREMIO DE AVENTUREROS - MENÚ PRINCIPAL')
-        print('='*45)
+        print('='*44)
         print('1. Gestionar expediciones')
         print('2. Ver recursos disponibles')
         print('3. Ver estadisticas')
         print('4. Avanzar tiempo')
         print('5. Guardar progreso (Ir a la posada)')
         print('6. Salir del gremio')
-        print('='*45)
+        print('='*44)
         
         opcion = input('Selecciona una opción (1-6): ')
 
@@ -206,6 +207,7 @@ def consultar_eventos_activos():
         )
 
 def avanzar_tiempo_gremio():
+
     print('=== AVANZAR TIEMPO ===')
 
     while True:
@@ -228,20 +230,27 @@ def avanzar_tiempo_gremio():
 
     lp()
 
+    eventos_antes = len(estado['eventos_activos'])
+
     finalizados = eventos.avanzar_tiempo(horas, estado)
 
-    if finalizados:
-        print(f'Se finalizaron {len(finalizados)} expediciones\n')
-        input('Presiona ENTER para volver...')
+    print(f'Han pasado {horas}h ...')
+    mostrar_reloj(estado['reloj'])
+    eventos.listar_eventos_activos(estado['eventos_activos'], estado['reloj'])
+    input('Presiona ENTER para continuar')
+    lp()
+
+    if eventos_antes == 0:
         lp()
-    else:
-        print('No termino ninguna expedicion\n')
-        input('Presiona ENTER para volver...')
+        print('El tiempo pasa con calma en el gremio...\n')
+        input('Presiona ENTER para continuar')
+        lp()
+    elif finalizados:
+        lp()
+        print(f'Se finalizaron {len(finalizados)} expediciones\n')
+        input('Presiona ENTER para terminar')
         lp()
     
-
-
-
 def mostrar_stock(stock: dict):
     print('\n=== STOCK ===')
     if not stock:
@@ -291,6 +300,13 @@ def mostrar_resumen_estadisticas(estado: dict):
 
     input('\nPulsa ENTER para volver...')
     lp()
+
+def mostrar_reloj(reloj: dict):
+    
+    dia = reloj['dia']
+    hora = reloj['hora']
+
+    print(f'=== Dia {dia} - hora {hora:02d}:00 ===')
 
 # ===========================================
 #           FUNCIONES DEl MENU
