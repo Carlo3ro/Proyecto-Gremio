@@ -126,6 +126,9 @@ def planificar_expedicion():
     mazmorra, error = recursos.seleccionar_mazmorra(estado['reloj'])
     if error:
         return
+
+    print('\n'*4) 
+    eventos.mostrar_panel_expedicion(mazmorra,{},{})
         
     # DURACIÓN
     duracion_horas = recursos.obtener_duracion_mazmorra(mazmorra)
@@ -135,11 +138,20 @@ def planificar_expedicion():
     if not aventureros:
         print('No se seleccionaron aventureros')
 
+    print('\n'*4)
+    eventos.mostrar_panel_expedicion(mazmorra,aventureros,{})
+
     # ARMAS
     print('\nCada aventurero debe tener un arma compatible')
     armas = recursos.seleccionar_armas()
     if not armas:
         print('No se seleccionaron armas')
+        return
+    
+    print('\n'*4)
+    eventos.mostrar_panel_expedicion(mazmorra,aventureros,armas)
+
+    input('\nPresiona ENTER para terminar la expedicion')
 
     # RECURSOS
     recursos_usados = {

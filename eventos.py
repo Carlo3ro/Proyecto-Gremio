@@ -310,6 +310,7 @@ def listar_historial_expediciones(estado: dict):
             print('\n  🏆 La expedición tuvo exito.')
 
     input('\nPulsa ENTER para volver...')
+
 # ===========================================
 #           CALCULOS DE EVENTOS 
 # ===========================================
@@ -341,3 +342,69 @@ def resolver_expedicion(poder, dificultad):
     print(f'Poder de la mazmorra: {umbral}')
 
     return poder >= umbral or suerte
+
+# ===========================================
+#           FUNCIONES DE UI
+# ===========================================
+
+def mostrar_panel_expedicion(mazmorra, aventureros, armas):
+
+    print('='*34)
+    print('=========== EXPEDICIÓN ===========')
+    print(f'\nMazmorra: {mazmorra} ({recursos.obtener_dificultad_mazmorra(mazmorra)})')
+    print()
+
+    # Aventureros
+    print('Aventureros seleccionados (armas compatibles):')
+
+    if not aventureros:
+        print('  Ninguno')
+    else:
+        for nombre in aventureros:
+
+            data_aventurero = recursos.recursos['aventureros'][nombre]
+            compatibles = data_aventurero['arma_predilecta']
+            poder = recursos.recursos['aventureros'][nombre]['poder']
+            print(f'⚔️  {nombre.title()} (+{poder}):')
+            print(f'    ({", ".join(compatibles)})')
+
+    print()
+
+    # Armas elegidas
+    print('Armas seleccionadas:')
+
+    if not armas:
+        print('  Ninguna')
+    else:
+        for arma in armas:
+            poder = recursos.recursos['armas'][arma]['poder']
+            print(f'{arma.title()} (+{poder})')
+
+    print()
+
+    # Poder total
+    if aventureros:
+        poder_total = calcular_poder_expedicion(
+            aventureros,
+            armas,
+            recursos.obtener_dificultad_mazmorra(mazmorra)
+        )
+
+        print(f'Poder total: {poder_total}')
+
+        # Riesgo
+        umbral = umbral_dificultad[
+            recursos.obtener_dificultad_mazmorra(mazmorra)
+        ]
+
+        if poder_total >= umbral:
+            print('Riesgo: BAJO ✅')
+        elif poder_total >= umbral * 0.8:
+            print('Riesgo: MEDIO ⚠️')
+        else:
+            print('Riesgo: ALTO 💀')
+
+    print('='*35)
+
+def limpiar_pantalla():
+    print('\n'*6)
