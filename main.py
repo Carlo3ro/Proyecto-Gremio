@@ -182,9 +182,24 @@ def consultar_eventos_activos():
 def avanzar_tiempo_gremio():
     print('=== AVANZAR TIEMPO ===')
 
-    horas = int(input('\nCuantas horas deseas avanzar?: '))
+    while True:
+
+        entrada = input('\nCuantas horas deseas avanzar?: ').strip()
+        
+        if not entrada.isdigit():
+            print('\nOpcion Invalida')
+            continue
+
+        horas = int(entrada)
+
+        if horas <= 0:
+            print('\nOpcion Incorrecta')
+            continue
+        
+        break
 
     finalizados = eventos.avanzar_tiempo(horas, estado)
+
     if finalizados:
         print(f'Se finalizaron {len(finalizados)} expediciones')
     else:
@@ -245,7 +260,7 @@ def menu_estadisticas(estado: dict):
         print('2. Items raros obtenidos')
         print('0. Volver')
 
-        opcion = input('Elige una opcion: ').strip()
+        opcion = input('\nElige una opcion: ').strip()
 
         if opcion == '1':
             mostrar_resumen_estadisticas(estado)
@@ -254,7 +269,7 @@ def menu_estadisticas(estado: dict):
         elif opcion == '0':
             break
         else:
-            print('Opcion Invalida')
+            print('\nOpcion Invalida')
     
 def menu_recursos(estado: dict):
     while True:
@@ -265,7 +280,7 @@ def menu_recursos(estado: dict):
         print('4. Ver stock de ítems')
         print('0. Volver')
 
-        opcion = input('Elige una opción: ').strip()
+        opcion = input('\nElige una opción: ').strip()
 
         if opcion == '1':
             recursos.mostrar_aventureros()
@@ -278,7 +293,7 @@ def menu_recursos(estado: dict):
         elif opcion == '0':
             break
         else:
-            print('Opción inválida')
+            print('\nOpción inválida')
 
 def menu_expediciones(estado: dict):
     while True:
@@ -288,7 +303,7 @@ def menu_expediciones(estado: dict):
         print('3. Ver historial de expediciones')
         print('0. Volver')
 
-        opcion = input('Elige una opción: ').strip()
+        opcion = input('\nElige una opción: ').strip()
 
         if opcion == '1':
             planificar_expedicion()
@@ -299,7 +314,7 @@ def menu_expediciones(estado: dict):
         elif opcion == '0':
             break
         else:
-            print('Opción inválida')
+            print('\nOpción inválida')
 
 # ===========================================
 #            PUNTO DE ENTRADA

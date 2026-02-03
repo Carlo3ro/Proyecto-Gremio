@@ -17,6 +17,7 @@ recursos = {
             {
                 'cantidad': 3,
                 'cantidad_max': 3,
+                'poder': 18,
                 'arma_predilecta': ['Espada Larga', 'Escudo de Hierro'],
                 'descripcion': 'Combatientes cuerpo a cuerpo, símbolo de fuerza y liderazgo.'
             },
@@ -24,28 +25,32 @@ recursos = {
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
-                'arma_predilecta': ['Baculo Magico'],
+                'poder': 16,
+                'arma_predilecta': ['Baculo Magico', 'Libro de Hechizos'],
                 'descripcion': 'Eruditos del gremio, dominan las artes arcanas y la magia ofensiva.'
             },
         'sanador': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
-                'arma_predilecta': ['Baculo Sanador'],
+                'poder': 14,
+                'arma_predilecta': ['Baculo Sanador', 'Campana Sagrada'],
                 'descripcion': 'Canalizan la energía divina para curar y proteger a sus aliados.'
             },
         'arquero': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
-                'arma_predilecta': ['Arco de Roble'],
+                'poder': 15,
+                'arma_predilecta': ['Arco de Roble', 'Cuchillo de Caza'],
                 'descripcion': 'Expertos del combate a distancia, veloces y precisos.'
             },
         'picaro': 
             {
                 'cantidad': 2,
                 'cantidad_max': 2,
-                'arma_predilecta': ['Dagas Dobles'],
+                'poder': 15,
+                'arma_predilecta': ['Dagas Dobles', 'Veneno Oculto'],
                 'descripcion': 'Maestros del sigilo, las trampas y la infiltración.'
             }
     },
@@ -56,6 +61,7 @@ recursos = {
         {
             'cantidad': 4,
             'cantidad_max': 4,
+            'poder': 10,
             'descripcion': 'Armas versátiles para los guerreros.',
             'tipo': 'Guerrero'
         },
@@ -63,6 +69,7 @@ recursos = {
         {
             'cantidad': 2,
             'cantidad_max': 2,
+            'poder': 6,
             'descripcion': 'Protege a los combatientes en primera línea.',
             'tipo': 'Guerrero'
         },
@@ -70,28 +77,64 @@ recursos = {
         {
             'cantidad': 2,
             'cantidad_max': 2,
+            'poder': 10,
             'descripcion': 'Conduce la energía mágica de los magos.',
+            'tipo': 'Mago'
+        },
+        'Libro de Hechizos':
+        {
+            'cantidad': 1,
+            'cantidad_max': 1,
+            'poder': 5,
+            'descripcion': 'Tomo antiguo repleto de conjuros.',
             'tipo': 'Mago'
         },
         'Baculo Sanador': 
         {
             'cantidad': 2,
             'cantidad_max': 2,
+            'poder': 8,
             'descripcion': 'Canal de poder divino para los sanadores.',
+            'tipo': 'Sanador'
+        },
+        'Campana Sagrada':
+        {
+            'cantidad': 1,
+            'cantidad_max': 1,
+            'poder': 4,
+            'descripcion': 'Relicario que refuerza la fe y las pleglarias.',
             'tipo': 'Sanador'
         },
         'Arco de Roble': 
         {
             'cantidad': 2,
             'cantidad_max': 2,
+            'poder': 8,
             'descripcion': 'Armas de precisión para los arqueros.',
+            'tipo': 'Arquero'
+        },
+        'Cuchillo de Caza':
+        {
+            'cantidad': 1,
+            'cantidad_max': 1,
+            'poder': 4,
+            'descripcion': 'Cuchillo resistente pensado para la supervivencia.',
             'tipo': 'Arquero'
         },
         'Dagas Dobles': 
         {
             'cantidad': 3,
             'cantidad_max': 3,
+            'poder': 12,
             'descripcion': 'Armas ligeras para ataques rápidos y sigilosos.',
+            'tipo': 'Picaro'
+        },
+        'Veneno Oculto':
+        {
+            'cantidad': 1,
+            'cantidad_max': 1,
+            'poder': 1,
+            'descripcion': 'Una sustancia letal para situaciones de sigilo.',
             'tipo': 'Picaro'
         }
     },
@@ -287,15 +330,15 @@ def seleccionar_mazmorra(reloj: dict):
             f'Duración {info["duracion_horas"]}h)'
         )
 
-    opcion = input('Elige una mazmorra: ').strip()
+    opcion = input('\nElige una mazmorra: ').strip()
 
     if not opcion.isdigit():
-        return None, 'Debes ingresar un número.'
+        return None, '\nDebes ingresar un número.'
 
     idx = int(opcion) - 1
 
     if idx < 0 or idx >= len(nombres):
-        return None, 'Opción fuera de rango.'
+        return None, '\nOpción fuera de rango.'
 
     return nombres[idx], None
 
@@ -317,12 +360,12 @@ def seleccionar_aventureros() -> dict:
             if nombre not in seleccionados:
                 print(f'{idx}. {nombre}')
 
-        opcion = input('Elija el numero del Aventurero (Presiona ENTER para terminar): ').strip()
+        opcion = input('\nElija el numero del Aventurero (Presiona ENTER para terminar): ').strip()
         if opcion == '':
             break
 
         if not opcion.isdigit():
-            print('Debes ingresar un número')
+            print('\nDebes ingresar un número')
             continue
 
         idx = int(opcion) - 1
@@ -346,7 +389,7 @@ def seleccionar_armas() -> dict:
     armas_disponibles = obtener_armas_disponibles()
 
     if not armas_disponibles:
-        print('No hay armas disponibles')
+        print('\nNo hay armas disponibles')
         return None
 
     seleccionados = {}
@@ -359,23 +402,23 @@ def seleccionar_armas() -> dict:
             if nombre not in seleccionados:    
                 print(f'{idx}. {nombre}')
 
-        opcion = input('Elija el numero del Arma (Presiona ENTER para terminar): ').strip()
+        opcion = input('\nElija el numero del Arma (Presiona ENTER para terminar): ').strip()
         if opcion == '':
             break
 
         if not opcion.isdigit():
-            print('Debes ingresar un número')
+            print('\nDebes ingresar un número')
             continue
 
         idx = int(opcion) - 1
         if idx < 0 or idx >= len(armas_disponibles):
-            print('Opción fuera de rango')
+            print('\nOpción fuera de rango')
             continue
 
         nombre = nombres[idx]
 
         if nombre in seleccionados:
-            print('Esa arma ya fue seleccionada')
+            print('\nEsa arma ya fue seleccionada')
             continue
             
         seleccionados[nombre] = 1
