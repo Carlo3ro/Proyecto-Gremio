@@ -274,24 +274,28 @@ def seleccionar_mazmorra(reloj: dict):
     mazmorras_disponibles = obtener_mazmorras_disponibles(reloj)
 
     if not mazmorras_disponibles:
-        return None, 'No hay mazmorras disponibles en este momento'
+        return None, 'No hay mazmorras disponibles en este momento.'
 
     nombres = list(mazmorras_disponibles.keys())
 
     print('\n=== MAZMORRAS DISPONIBLES ===')
-    for i, nombre in enumerate(nombres, start=1):
-        dificultad = mazmorras_disponibles[nombre]['dificultad']
-        print(f'{i}. {nombre} (Dificultad {dificultad})')
+    for idx, nombre in enumerate(nombres, start=1):
+        info = mazmorras_disponibles[nombre]
+        print(
+            f'{idx}. {nombre} '
+            f'(Dificultad {info["dificultad"]}, '
+            f'Duración {info["duracion_horas"]}h)'
+        )
 
-    opcion = input('Selecciona una mazmorra: ').strip()
+    opcion = input('Elige una mazmorra: ').strip()
 
     if not opcion.isdigit():
-        return None, 'Entrada inválida'
+        return None, 'Debes ingresar un número.'
 
     idx = int(opcion) - 1
 
     if idx < 0 or idx >= len(nombres):
-        return None, 'Opción fuera de rango'
+        return None, 'Opción fuera de rango.'
 
     return nombres[idx], None
 
@@ -313,7 +317,7 @@ def seleccionar_aventureros() -> dict:
             if nombre not in seleccionados:
                 print(f'{idx}. {nombre}')
 
-        opcion = input('Elija el numero del Aventurero (enter para terminar la seleccion): ').strip()
+        opcion = input('Elija el numero del Aventurero (Presiona ENTER para terminar): ').strip()
         if opcion == '':
             break
 
@@ -324,7 +328,7 @@ def seleccionar_aventureros() -> dict:
         idx = int(opcion) - 1
         
         if idx < 0 or idx >= len(aventureros_disponibles):
-            print('Opción fuera de rango')
+            print('Opcion fuera de rango')
             continue
 
         nombre = nombres[idx]
@@ -355,7 +359,7 @@ def seleccionar_armas() -> dict:
             if nombre not in seleccionados:    
                 print(f'{idx}. {nombre}')
 
-        opcion = input('Elija el numero del Arma (enter para terminar la seleccion): ').strip()
+        opcion = input('Elija el numero del Arma (Presiona ENTER para terminar): ').strip()
         if opcion == '':
             break
 
@@ -409,11 +413,13 @@ def obtener_armas_disponibles():
     return disponibles
 
 def obtener_mazmorras_disponibles(reloj: dict) -> dict:
+    
     disponibles = {}
-
     hora = reloj['hora']
-
+    
     for nombre, info in recursos['mazmorras'].items():
+        if not info.get('disponible', True):
+            continue
         if info.get('nocturna'):
             hora = reloj['hora']
             if not hora >= 20 or hora <= 4:

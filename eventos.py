@@ -39,12 +39,12 @@ def crear_evento(
     siguiente_id: int,
     eventos_activos: dict
 ):
-    """
+    '''
     Intenta crear un evento (expedición).
     Retorna:
         (True, id_evento) si se creó
         (False, mensaje_error) si falló
-    """
+    '''
 
     # VALIDACION 
     ok, msg = validacion.validar_evento(
@@ -62,7 +62,7 @@ def crear_evento(
         for nombre, cantidad in recursos_tipo.items():
             recursos.usar_recurso(tipo, nombre, cantidad)
     
-    # CALCULAR DIN DEL EVENTO
+    # CALCULAR FIN DEL EVENTO
     inicio_hora = reloj['dia'] * 24 + reloj['hora']
     fin_hora = inicio_hora + duracion_horas
 
@@ -93,6 +93,9 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
     '''
     evento = eventos_activos.pop(id_evento)
 
+    if 'resultado' in evento:
+        return True, 'Evento ya fue resuelto'
+
     # LIBERAR MAZMORRA
     recursos.liberar_mazmorra(evento['mazmorra'])
 
@@ -103,74 +106,75 @@ def finalizar_evento(id_evento: int, eventos_activos: dict, eventos_historial: d
 
     # RISK SCORE
     poder = calcular_poder_expedicion(
-        evento['aventureros'],
-        evento['armas'],
+        evento['recursos_usados']['aventureros'],
+        evento['recursos_usados']['armas'],
         evento['dificultad']
     )
 
     exito = resolver_expedicion(poder, evento['dificultad'])
+    evento['exito'] = exito
 
-    # FRACASO 
+    # ================================
+    # RESULTADO DE LA EXPEDICIÓN
+    # ================================
+
+    estado['estadisticas']['expediciones_totales'] += 1
+
     if not exito:
         print('\nLa expedicion ha fracasado...')
         print('Los aventureros regresan heridos y sin botin.')
 
-        estado['estadisticas']['expediciones_totales'] += 1
         estado['estadisticas']['expediciones_fallidas'] += 1
 
-        evento['estado'] = 'finalizado'
-        eventos_historial[id_evento] = evento
-
-        input('\nPulsa ENTER para continuar...')
-        return True, 'Expedicion fallida'
-
-    # EXITO 
-    estado['estadisticas']['expediciones_totales'] += 1
-    estado['estadisticas']['expediciones_exitosas'] += 1
-
-    # RECOMPENSAS
-    if evento.get('nocturna', False):
-        bonus = 2.0
-        estado['estadisticas']['expediciones_noche_profunda'] += 1
     else:
-        bonus = 1.0
+        estado['estadisticas']['expediciones_exitosas'] += 1
 
-    recompensas_evento = generar_recompensas(evento['dificultad'], bonus)
-    recursos.aplicar_recompensas(recompensas_evento, stock)
+        if evento['dificultad'] == 'S':
+            estado['estadisticas']['mazmorras_S_completadas'] += 1
 
-    print('\nRecompensas obtenidas:')
-    for nombre, cant in recompensas_evento.items():
-        print(f'- {nombre} x{cant}')
+        # RECOMPENSAS (SOLO SI HAY ÉXITO)
+        if evento.get('nocturna', False):
+            bonus = 2.0
+            estado['estadisticas']['expediciones_noche_profunda'] += 1
+        else:
+            bonus = 1.0
 
-    estado['estadisticas']['recompensas_totales'] += sum(recompensas_evento.values())
+        recompensas_evento = generar_recompensas(evento['dificultad'], bonus)
+        recursos.aplicar_recompensas(recompensas_evento, stock)
 
-    # ITEMS RAROS
-    items_raros = obtener_items_raros(recompensas_evento)
+        print('\nRecompensas obtenidas:')
+        for nombre, cant in recompensas_evento.items():
+            print(f'- {nombre} x{cant}')
 
-    if items_raros:
-        registrar_items_raros(
-            items_raros,
-            evento,
-            estado['reloj'],
-            estado
-        )
+        estado['estadisticas']['recompensas_totales'] += sum(recompensas_evento.values())
 
-        estado['estadisticas']['items_raros_total'] += len(items_raros)
+        # ITEMS RAROS
+        items_raros = obtener_items_raros(recompensas_evento)
 
-        print('\nVES ALGO BRILLAR EN LA DISTANCIA...\n')
-        print('TE ACERCAS A VERLO Y LO TOMAS...\n')
-        print('Has obtenido un botin excepcional:\n')
-        for item in items_raros:
-            print(f'- {item}')
-        input('\nPulsa ENTER para continuar...')
+        if items_raros:
+            registrar_items_raros(
+                items_raros,
+                evento,
+                estado['reloj'],
+                estado
+            )
+            estado['estadisticas']['items_raros_total'] += len(items_raros)
 
-    # FINALIZACION DE EVENTO
+            print('\nVES ALGO BRILLAR EN LA DISTANCIA...\n')
+            for item in items_raros:
+                print(f'- {item}')
+            input('\nPulsa ENTER para continuar...')
+
+    # ================================
+    # FINALIZACIÓN ÚNICA DEL EVENTO
+    # ================================
+
     evento['estado'] = 'finalizado'
+    evento['resultado'] = 'exitosa' if exito else 'fallida'
+
     eventos_historial[id_evento] = evento
 
-    if evento['dificultad'] == 'S':
-        estado['estadisticas']['mazmorras_S_completadas'] += 1
-
+    input('\nPulsa ENTER para continuar...')
     return True, f'Evento {id_evento} finalizado correctamente'
 
 # ===========================================
@@ -264,26 +268,48 @@ def listar_eventos_activos(eventos_activos: dict):
     '''
     Mostrar eventos activos
     '''
+
+    print('\n--- EVENTOS ACTIVOS ---')
     if not eventos_activos:
         print('No hay eventos activos')
+        input('\nPresiona ENTER para continuar...')
         return
 
-    print('\n=== EVENTOS ACTIVOS ===')
     for id_evento, evento in eventos_activos.items():
         print(f'''
-ID: {id_evento}
+Expedicion #{id_evento}
 Mazmorra: {evento['mazmorra']}
+Dificultad: {evento['dificultad']}
+Aventureros: {','.join(evento['recursos_usados']['aventureros'])}
 Tiempo restante: {evento['tiempo_restante']}horas
-Estado: {evento['estado']}
 ''')
 
-def listar_historial(eventos_historial: dict):
+def listar_historial_expediciones(estado: dict):
+    historial = estado['eventos_historial']
 
-    '''
-    Mostrar expediciones finalizadas
-    '''
-    return list(eventos_historial.values())
+    print('\n--- HISTORIAL DE EXPEDICIONES ---')
 
+    if not historial:
+        print('Aun no se han realizado expediciones.')
+        input('\nPulsa ENTER para volver...')
+        return
+
+    for id_evento, evento in historial.items():
+        estado_evt = evento.get('estado', 'finalizado')
+
+        print(f'\n📜 Expedición #{id_evento}')
+        print(f'  Mazmorra   : {evento['mazmorra']}')
+        print(f'  Dificultad : {evento['dificultad']}')
+        print(f'  Estado     : {estado_evt}')
+
+        resultado = evento.get('resultado')
+
+        if resultado == 'fallida':
+            print('\n  💀 La expedición fracaso.')
+        else:
+            print('\n  🏆 La expedición tuvo exito.')
+
+    input('\nPulsa ENTER para volver...')
 # ===========================================
 #           CALCULOS DE EVENTOS 
 # ===========================================
@@ -298,7 +324,7 @@ def calcular_poder_expedicion(aventureros, armas, dificultad):
         poder += len(armas_aventurero) * 5
 
     if dificultad == 'S':
-        poder -= 15
+        poder -= 10
 
     return poder
 

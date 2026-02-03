@@ -21,7 +21,7 @@ def crear_estado_inical():
         'stock': {},
         'estadisticas': {
             'expediciones_totales': 0,
-            'expediciones_existosas': 0,
+            'expediciones_exitosas': 0,
             'expediciones_fallidas': 0,
             'horas_transcurridas': 0,
             'recompensas_totales': 0,
@@ -50,26 +50,24 @@ def mostrar_menu(estado: dict):
         print('\n' + '='*45)
         print('GREMIO DE AVENTUREROS - MENÚ PRINCIPAL')
         print('='*45)
-        print('1. Ver recursos disponibles')
-        print('2. Planificar una nueva expedición')
-        print('3. Consultar eventos activos')
-        print('4. Pasar al día siguiente / Avanzar tiempo')
+        print('1. Gestionar expediciones')
+        print('2. Ver recursos disponibles')
+        print('3. Ver estadisticas')
+        print('4. Avanzar tiempo')
         print('5. Guardar progreso (Ir a la posada)')
-        print('6. Ver el stock/inventario')
-        print('7. Ver el historial de items raros')
-        print('8. Salir del gremio')
+        print('6. Salir del gremio')
         print('='*45)
         
-        opcion = input('Selecciona una opción (1-8): ')
+        opcion = input('Selecciona una opción (1-6): ')
 
         if opcion == '1':
-            recursos.mostrar_recursos_disponibles(estado['reloj'])
+            menu_expediciones(estado)
 
         elif opcion == '2':
-            planificar_expedicion()
+            menu_recursos(estado)
 
         elif opcion == '3':
-            eventos.listar_eventos_activos(estado['eventos_activos'])
+            menu_estadisticas(estado)
 
         elif opcion == '4':
             avanzar_tiempo_gremio()
@@ -77,18 +75,12 @@ def mostrar_menu(estado: dict):
         elif opcion == '5':
             persistencia.guardar_estado(estado)
             print('\nHas descansado en la posada. Progreso guardado.')
-        
+
         elif opcion == '6':
-            mostrar_stock(estado['stock'])
-
-        elif opcion == '7':
-            mostrar_historial_items_raros(estado)
-
-        elif opcion == '8':
             ejecutando = confirmar_salida(estado)
 
         else:
-            print('\nOpción no válida. Intenta de nuevo.')
+            print('\nOpcion no valida. Intenta de nuevo.')
 
 # ===========================================
 #         SALIDA CON CORFIMACION
@@ -98,7 +90,7 @@ def confirmar_salida (estado: dict) -> bool:
     print('\nDeseas guardar antes de salir?')
     print('1. Guardar y salir')
     print('2. Salir sin guardar')
-    print('3. Cancelar')
+    print('0. Cancelar')
 
     opcion = input('Selecciona una opcion (1-3): ')
 
@@ -111,8 +103,7 @@ def confirmar_salida (estado: dict) -> bool:
         print('\nSales del gremio sin guardar')
         return False
     
-    elif opcion == '3':
-        print('\nSalida cancelada')
+    elif opcion == '0':
         return True
     
     else:
@@ -120,7 +111,7 @@ def confirmar_salida (estado: dict) -> bool:
         return True
 
 # ===========================================
-#           FUNCIONES DEL MENU
+#       FUNCIONES DE LOS SUBMENUS
 # ===========================================
 
 def planificar_expedicion():
@@ -134,9 +125,8 @@ def planificar_expedicion():
     # MAZMORRA
     mazmorra, error = recursos.seleccionar_mazmorra(estado['reloj'])
     if error:
-        print(error)
         return
-    
+        
     # DURACIÓN
     duracion_horas = recursos.obtener_duracion_mazmorra(mazmorra)
     
@@ -203,7 +193,8 @@ def avanzar_tiempo_gremio():
 def mostrar_stock(stock: dict):
     print('\n=== STOCK ===')
     if not stock:
-        print('El stock esta vacio')
+        print('\nEl stock esta vacio')
+        input('\nPresiona ENTER para continuar...')
         return
     
     for nombre, cantidad in stock.items():
@@ -226,6 +217,89 @@ def mostrar_historial_items_raros(estado):
             f' (Dificultad {h['dificultad']})'
         )
     input('\nPresiona ENTER para continuar')
+
+def mostrar_resumen_estadisticas(estado: dict):
+    est = estado['estadisticas']
+
+    print('\n--- RESUMEN DEL GREMIO ---')
+    print(f'Expediciones totales     : {est['expediciones_totales']}')
+    print(f'Expediciones exitosas    : {est['expediciones_exitosas']}')
+    print(f'Expediciones fallidas    : {est['expediciones_fallidas']}')
+    print(f'Horas transcurridas      : {est['horas_transcurridas']}')
+    print(f'Recompensas obtenidas    : {est['recompensas_totales']}')
+    print(f'Ítems raros obtenidos    : {est['items_raros_total']}')
+    print(f'Expediciones nocturnas   : {est['expediciones_noche_profunda']}')
+    print(f'Mazmorras S completadas  : {est['mazmorras_S_completadas']}')
+
+    input('\nPulsa ENTER para volver...')
+
+# ===========================================
+#           FUNCIONES DEl MENU
+# ===========================================
+
+def menu_estadisticas(estado: dict):
+
+    while True:
+        print('\n=== ESTADISTICAS DEL GREMIO ===')
+        print('1. Resumen general')
+        print('2. Items raros obtenidos')
+        print('0. Volver')
+
+        opcion = input('Elige una opcion: ').strip()
+
+        if opcion == '1':
+            mostrar_resumen_estadisticas(estado)
+        elif opcion == '2':
+            mostrar_historial_items_raros(estado)
+        elif opcion == '0':
+            break
+        else:
+            print('Opcion Invalida')
+    
+def menu_recursos(estado: dict):
+    while True:
+        print('\n=== RECURSOS DEL GREMIO ===')
+        print('1. Ver aventureros')
+        print('2. Ver armas')
+        print('3. Ver mazmorras')
+        print('4. Ver stock de ítems')
+        print('0. Volver')
+
+        opcion = input('Elige una opción: ').strip()
+
+        if opcion == '1':
+            recursos.mostrar_aventureros()
+        elif opcion == '2':
+            recursos.mostrar_armas()
+        elif opcion == '3':
+            recursos.mostrar_mazmorras(estado['reloj'])
+        elif opcion == '4':
+            mostrar_stock(estado['stock'])
+        elif opcion == '0':
+            break
+        else:
+            print('Opción inválida')
+
+def menu_expediciones(estado: dict):
+    while True:
+        print('\n=== GESTIÓN DE EXPEDICIONES ===')
+        print('1. Planificar nueva expedición')
+        print('2. Ver expediciones activas')
+        print('3. Ver historial de expediciones')
+        print('0. Volver')
+
+        opcion = input('Elige una opción: ').strip()
+
+        if opcion == '1':
+            planificar_expedicion()
+        elif opcion == '2':
+            eventos.listar_eventos_activos(estado['eventos_activos'])
+        elif opcion == '3':
+            eventos.listar_historial_expediciones(estado)
+        elif opcion == '0':
+            break
+        else:
+            print('Opción inválida')
 
 # ===========================================
 #            PUNTO DE ENTRADA
