@@ -374,7 +374,7 @@ def listar_historial_expediciones(estado: dict):
     limpiar_pantalla()
 
 # ===========================================
-#           CALCULOS DE EVENTOS 
+#            FUNCIONES DE CALCULOS
 # ===========================================
 
 def calcular_poder_expedicion(aventureros, armas, dificultad):
@@ -413,7 +413,7 @@ def calcular_tiempo_restante(evento, reloj):
     return max(0, restante)
 
 # ===========================================
-#           FUNCIONES DE UI
+#              FUNCIONES DE UI
 # ===========================================
 
 def mostrar_panel_expedicion(mazmorra, aventureros, armas):

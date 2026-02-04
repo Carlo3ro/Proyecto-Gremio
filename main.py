@@ -61,13 +61,13 @@ def bienvenida(estado, es_partida_nueva):
 
     if es_partida_nueva:
 
-        print('Humano...')
+        print('Nuevo líder...')
         time.sleep(1.5)
         nombre = input('\n Cuál es tu nombre? ').strip()
         time.sleep(1.5)
 
         if not nombre:
-            nombre = 'Aventurero'
+            nombre = 'Grimm'
 
         estado['jugador']['nombre'] = nombre
 

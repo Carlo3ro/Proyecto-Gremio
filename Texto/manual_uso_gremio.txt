@@ -1,0 +1,173 @@
+MANUAL DE USO — GREMIO DE AVENTUREROS
+
+Este documento explica cómo utilizar el programa paso a paso y describe
+qué hace cada opción disponible dentro del sistema
+
+------------------------------------------------------------------------
+
+INICIO DEL PROGRAMA
+
+Al ejecutar el programa pueden ocurrir dos cosas:
+
+- Partida nueva: Se te pedirá ingresar un nombre. Este solo se usa con
+fines temáticos para personalizar la experiencia
+
+- Partida existente: El sistema cargará automáticamente tu progreso y
+mostrará un mensaje indicando que el gremio sigue en pie
+
+Después de esto accederás al menú principal
+
+------------------------------------------------------------------------
+
+MENÚ PRINCIPAL
+
+Aquí se controla todo el sistema del gremio.
+
+1.  Gestionar expediciones
+2.  Ver recursos disponibles
+3.  Ver estadísticas
+4.  Avanzar tiempo
+5.  Guardar progreso
+6.  Salir del gremio
+
+------------------------------------------------------------------------
+
+1. GESTIONAR EXPEDICIONES
+
+Este menú permite organizar las misiones del gremio
+
+Opciones:
+
+-- Planificar nueva expedición Permite crear una misión siguiendo estos
+pasos:
+
+-   Seleccionar una mazmorra disponible
+-   Elegir aventureros libres
+-   Asignar armas compatibles
+-   Confirmar la expedición
+
+El sistema calculará automáticamente el poder del grupo y resolverá la
+misión cuando el tiempo avance.
+
+-- Ver expediciones activas Muestra todas las expediciones actualmente en
+curso junto con:
+
+-   Expedicion con Id
+-   Mazmorra
+-   Dificultad
+-   Aventureros elegidos
+-   Tiempo Total
+-   Tiempo Restante (Barra de progreso y horas restantes)
+
+✔ Ver historial de expediciones Lista todas las misiones finalizadas
+indicando si fueron:
+
+🏆 Exitosas
+💀 Fallidas
+
+También sirve para evaluar tu progreso en el gremio
+
+------------------------------------------------------------------------
+
+2. VER RECURSOS DISPONIBLES
+
+Permite consultar todo lo que posee el gremio.
+
+-- Aventureros
+Muestra las clases disponibles
+
+-- Armas
+Lista el armamento disponible para asignar a los héroes
+
+-- Mazmorras
+Muestra las mazmorras accesibles según la hora del juego y su
+dificultad
+
+-- Stock de ítems
+Contiene todas las recompensas obtenidas durante las expediciones
+
+------------------------------------------------------------------------
+
+3. VER ESTADISTICAS
+
+Ofrece un resumen del rendimiento del gremio
+
+Incluye métricas como:
+
+-   Expediciones totales
+-   Misiones exitosas y fallidas
+-   Horas transcurridas
+-   Recompensas obtenidas
+-   Ítems raros encontrados
+-   Expediciones nocturnas
+-   Mazmorras de rango S completadas
+
+También permite revisar el historial de objetos raros.
+
+Este panel funciona como un sistema de seguimiento del progreso.
+
+------------------------------------------------------------------------
+
+4. AVANZAR TIEMPO
+
+Hace que el mundo del juego continue
+
+Al avanzar horas:
+
+- Las expediciones progresan 
+- Algunas pueden finalizar automáticamente
+- El sistema detecta el ciclo día / noche
+- Pueden aparecer eventos especiales durante la noche profunda.
+
+Si no hay expediciones activas, simplemente se indicará que el tiempo
+pasa con calma en el gremio.
+
+IMPORTANTE: El avance del tiempo es lo que permite que el juego
+evolucione.
+
+------------------------------------------------------------------------
+
+5. GUARDAR EL PROGRESO (IR A LA POSADA)
+
+Guarda el estado actual del gremio
+
+-  	recursos
+-   	expediciones
+-  	estadisticas
+-   reloj
+-   inventario
+
+Se recomienda guardar antes de salir del programa.
+
+------------------------------------------------------------------------
+
+6. SALIR DEL GREMIO
+
+Permite cerrar el programa
+
+El sistema preguntará si deseas guardar antes de salir para evitar la
+pérdida de progreso
+
+------------------------------------------------------------------------
+
+CONSEJOS PARA JUGAR MEJOR
+
+- No envíes grupos débiles a mazmorras difíciles 
+- Equipa siempre armas compatibles 
+- Presta atención al poder total antes de confirmar
+- Las mazmorras de rango alto requieren planificación
+- La noche profunda puede traer oportunidades especiales.
+
+El éxito del gremio depende de tus decisiones
+
+------------------------------------------------------------------------
+
+RESUMEN RAPIDO DEL FLUJO
+
+Planifica expediciones -> Avanza el tiempo -> Obtén recompensas -> Mejora
+tu colección en el Gremio -> Repite
+
+------------------------------------------------------------------------
+
+Este sistema fue diseñado para ser intuitivo, pero lo suficientemente
+profundo como para premiar la estrategia

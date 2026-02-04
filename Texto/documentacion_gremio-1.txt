@@ -1,0 +1,340 @@
+=========================================
+=============== ÍNDICE ==================
+
+[1] - Componentes Principales del Sistema
+	- [1.0]	Gestión de Estado
+	- [1.1] Núcleo Flexible
+	- [1.2] Sistema de RISK SCORE
+	- [1.3] Sistema de Persistencia
+[2] - Arquitectura Modular
+	- [2.0]	Importancia
+	- [2.1] main.py
+ 	- [2.2] eventos.py
+	- [2.3]	recursos.py
+	- [2.4] recompensas.py
+	- [2.5] validacion.py y restricciones.py
+	- [2.6]	persistencia.py
+	- [2.7] estadisticas.py
+	- [2.8] Escalabilidad del proyecto
+[3] - UX de consola (mejoras)
+[4] - Librerías Utilizadas
+
+Para navegar rápido presiona:
+
+CTRL + F (o 'Buscar' en el teléfono)
+y escribe el número del título
+
+=========================================
+
+GREMIO DE AVENTUREROS — DOCUMENTACIÓN DEL PROYECTO
+
+Descripción General
+
+“Gremio de Aventureros” es un sistema de gestión de expediciones
+inspirado en la lógica de los RPG clásicos. Aunque su temática es
+fantástica, la arquitectura del proyecto fue diseñada con principios
+aplicables a software real, incluyendo gestión de estado, modularidad,
+validación de datos y separación de responsabilidades
+
+El programa permite administrar recursos, planificar expediciones,
+gestionar el paso del tiempo, calcular probabilidades de éxito mediante
+un sistema de risk score y registrar estadísticas persistentes del
+jugador
+
+Este proyecto demuestra cómo un entorno lúdico puede servir como base 
+para varios sistemas de software al contar con varios aspectos:
+
+-   estructuras de datos
+-   diseño modular
+-   control de flujo
+-   validación
+-   modelado lógico
+-   persistencia
+-   debugging
+-   escalabilidad
+
+------------------------------------------------------------------------------
+
+1. Componentes Principales del Sistema
+
+--- 1.0 Gestión de Estado 
+El proyecto utiliza un objeto global de estado que centraliza la 
+información del sistema:
+
+-   jugador
+-   recursos
+-   eventos activos
+-   historial de expediciones
+-   reloj interno
+-   stock de ítems
+-   estadísticas
+-   persistencia
+
+Este ofrece una forma clara y eficiente de centralizar toda
+la información crítica del sistema en una única estructura y
+la facilidad para compartir información entre módulos sin necesidad
+de crear dependencias complejas. Por ejemplo, el reloj, los eventos activos
+o el inventario pueden viajar como un solo objeto, lo que simplifica
+tanto la lectura del código como su mantenimiento
+
+Además, este enfoque mejora la escalabilidad: si en el futuro se agregan 
+nuevas características (economía, comercio, habilidades, etc.), basta 
+con extender el diccionario de estado sin reestructurar el programa completo.
+
+Este enfoque fue basado en patrones usados en: - motores de
+videojuegos - dashboards administrativos - simuladores
+
+--- 1.1 El núcleo del programa fue diseñado de forma modular y desacoplada,
+lo que lo hace fácilmente reutilizable en otros tipos de software
+
+Aunque aquí se presenta con temática RPG, en realidad implementa patrones
+como gestión de estados, asignación de recursos, validación de
+reglas y resolución de eventos, la lógica central podría adaptarse
+sin grandes cambios a sistemas reales como
+
+-   gestores de inventario
+-   sistemas de planificación
+-   control de operaciones
+-   software administrativo
+-   simuladores empresariales
+-   herramientas educativas
+
+La temática es perfectamente intercambiable
+
+--- 1.2 Sistema de Risk Score es uno de los núcleos del proyecto, el cálculo
+de poder del grupo frente al umbral de la mazmorra
+
+Factores considerados:
+ 
+-   poder ( P(X) ) 
+-   poder base de aventureros( P(AV) ) 
+-   poder de armas ( P(AR) ) 
+-   dificultad de la mazmorra o umbral( DIF ) 
+-   penalización ( PEN ) 
+-   factor de suerte ( SRT ) 
+-   poder de la expedición ( P(EX) )
+-   poder ajustado por una penalización ( P(AJ) )
+
+El éxito de una expedición se determina mediante un modelo de evaluación
+de riesgo que compara el poder total del grupo contra el umbral
+de dificultad de la mazmorra
+
+exito == True:
+ - Si P(EX) >= DIF
+ - Si SRT == TRUE
+
+exito == False:
+ - Cualquier otro caso
+
+El poder del grupo (P(EX)) se calcula mediante la suma del poder individual de
+todos los aventureros seleccionados (P(AV)) junto con el poder de las 
+armas equipadas (P(AR)):
+
+P(EX) = P(AV) + P(AR)
+
+En el caso de las mazmorras de dificultad ((DIF) = S) de nivel S se aplica una 
+penalización (PEN) al poder de la expedición (P(EX)) para representar el 
+peligro extremo de este tipo de misiones, en caso contrario (DIF) = A o B o C 
+se mantiene el poder de la expedición
+
+Si (DIF) = S
+ - P(AJ) = P(EX) x 0.85 
+Si (DIF) = A, B, C
+ - P(EX)
+
+Sin embargo, el sistema tambien incorpora un 15% de probabilidad de suerte (STR)
+permitiendo que expediciones con menor poder (P(EX)) que el umbral de la mazmorra (DIF)
+puedan triunfar ocasionalmente:
+
+STR == TRUE
+
+Este enfoque combina un componente determinista, donde la planificación
+y la gestión de recursos influyen directamente en el resultado,
+con un componente probabilístico que introduce incertidumbre
+
+Aunque está aplicado en un contexto RPG, este modelo replica
+principios utilizados en sistemas reales de evaluación de riesgo,
+asignación de recursos y toma de decisiones, lo que refuerza
+la solidez estructural del proyecto.
+
+Este tipo de sistema es directamente transferible a contextos reales
+como:
+
+-   scoring crediticio
+-   análisis de riesgo
+-   evaluación de recursos
+
+--- 1.3 Persistencia de Datos 
+
+El sistema de persistencia permite guardar y cargar el estado completo
+del programa, asegurando que el progreso del jugador no se pierda
+entre sesiones. A través de este mecanismo se almacenan datos como recursos,
+expediciones, estadísticas y el reloj del juego, lo que garantiza continuidad
+
+Esto brinda comodidad, persistencia de datos y profesionalidad
+
+------------------------------------------------------------------------------
+
+2. Arquitectura Modular - El código está dividido en módulos
+especializados:
+
+--- 2.0 El sistema está construido bajo una arquitectura modular,
+donde cada archivo cumple una responsabilidad específica.
+Esto mejora la mantenibilidad, facilita el debugging y permite
+escalar el proyecto sin generar dependencias caóticas
+
+--- 2.1 main.py:
+ 
+Es el punto de entrada del programa y actúa como
+coordinador genera y encargado del flujo principal
+	
+Funciones clave:
+	
+	- Da la Bienvenida
+	- Inicializa o carga el estado
+	- Gestiona el menú principal
+	- Controla la navegación entre submenús
+	- Maneja la interacción directa con el usuario
+	- Invoca la lógica de otros módulos sin implementarla
+
+--- 2.2 eventos.py: 
+
+Gestiona todo el ciclo de vida de una expedición, desde su creación 
+hasta su resolución
+
+Funciones clave:
+
+	- CREACION DE EVENTOS
+		- Valida condiciones iniciales.
+		- Ocupa recursos.
+		- Calcula tiempo de finalización.
+		- Registra el evento como activo.
+
+	- FINALIZACION DE EVENTOS
+		- Libera recursos
+		- Calcula el RISK SCORE
+		- Da recompensas en caso de victoria
+		- Items raros en ciertas mazmorras
+		- Finaliza eventos
+
+	- SISTEMA DE TIEMPO
+		- Simula el paso de horas dentro del gremio:
+		- Detecta cuándo una expedición termina.
+		- Dispara automáticamente la resolución del evento.
+		- Gestiona transiciones día / noche.
+		- Genera avisos narrativos.
+
+	- FUNCIONES DE CALCULOS
+		- Resultado de las expediciones
+		- Calculo del tiempo restante
+	
+	- FUNCIONES DE UI
+		- Algunas funciones de mejores visuales para la IU
+
+--- 2.3 recursos.py: Administra todo lo que el gremio posee mediante un dict
+encargado de llevar todos los recursos
+
+Funciones clave:
+	- ocupar recursos
+	- liberarlos
+	- filtrarlos
+	- mostrarlos
+
+--- 2.4 recompensas.py: Generación de loot y rarezas
+
+Genera recompensas según:
+	- dificultad
+	- bonus
+	- probabilidad
+
+--- 2.5 validacion.py y Restricciones.py: Reglas del proyecto
+
+Restricciones:
+	- No usar recursos sin su correspondiente
+	- No usar recursos inexistentes.
+	- No seleccionar aventureros ocupados.
+	- No iniciar expediciones sin armas.
+	- Respetar compatibilidades.
+	- Evitar duplicados.
+	- Controlar cantidades.
+	- Min de aventureros por mazmorra
+
+--- 2.6 persistencia.py: Guardado y carga de partidas
+
+Conceptos importantes:
+	- serialización
+	- restauración
+	- tolerancia a cierres
+
+--- 2.7 estadisticas.py: Registro histórico y métricas
+
+Registra métricas como:
+	- expediciones totales
+	- éxitos / fallos
+	- horas transcurridas
+	- rarezas
+	- mazmorras S
+
+Esta separación replica en comodidades como:
+
+- Arquitectura limpia
+- Separacion de conceptos
+- Diseño mantenible
+- Escalabilidad futura
+
+--- 2.8 Escalabilidad El proyecto fue diseñado para crecer fácilmente:
+
+El proyecto fue estructurado con un enfoque modular que facilita su escalabilidad. 
+Cada componente —eventos, recursos, validaciones, persistencia y estadísticas— opera 
+de forma desacoplada, lo que permite añadir nuevas funcionalidades sin afectar el núcleo 
+del sistema
+
+Posibles extensiones: - nuevas clases - habilidades - crafting -
+economía - eventos aleatorios - multirecurso - reputación
+del gremio
+
+Además, el uso de un estado centralizado simplifica la expansión del modelo de datos, 
+mientras que el sistema de validación protege la integridad del programa a medida 
+que crece. Esta arquitectura hace que el proyecto no solo sea ampliable, sino también 
+mantenible a largo plazo.
+
+------------------------------------------------------------------------
+
+3. Experiencia de Usuario (UX en consola) 
+
+La interfaz fue diseñada para ser clara, inmersiva y facil de utilizar,
+con esto se logra una experiencia más temática 
+
+A pesar de ejecutarse en terminal, el sistema incorpora:
+
+-   headers dinámicos
+-   iconografía contextual (día/noche)
+-   barras de progreso
+-   pausas dramáticas
+-   limpieza de pantalla
+-   feedback inmediato
+-   menús jerárquicos
+
+Con esto se logra una experiencia más dinámica que transforma la interacción 
+en algo más cercano a un videojuego que a una aplicación tradicional de terminal
+
+Este enfoque no solo mejora la legibilidad, sino que también reduce la fricción 
+para el usuario, permitiendo navegar el sistema de manera intuitiva incluso sin 
+conocimientos técnicos
+
+------------------------------------------------------------------------
+
+4. Librerías Utilizadas
+
+Estándar de Python:
+
+-   random
+-   time
+-   os
+-   json
+
+No se utilizaron frameworks externos, lógica pura y estructuras base
+
+------------------------------------------------------------------------
+
+
